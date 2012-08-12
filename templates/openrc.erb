@@ -1,0 +1,11 @@
+# the following three lines are needed for some operations, but not all
+export SERVICE_TOKEN=<%= keystone_admin_token %>
+export SERVICE_PASSWORD=<%= keystone_admin_password %>
+export SERVICE_ENDPOINT=http://localhost:35357/v2.0
+export REGION=RegionOne
+#
+export OS_USERNAME=admin
+export OS_PASSWORD=<%= keystone_admin_password %>
+export OS_AUTH_URL=http://localhost:35357/v2.0
+export OS_TENANT_NAME=<%= keystone_admin_tenant %>
+export OS_REGION_NAME=RegionOne

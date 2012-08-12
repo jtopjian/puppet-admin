@@ -1,0 +1,7 @@
+# Enable UDP
+$ModLoad imudp
+# Listen on <%= interface %> only
+$UDPServerAddress <%= interface %>
+# Port 514
+$UDPServerRun 514
+

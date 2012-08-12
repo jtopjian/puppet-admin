@@ -1,0 +1,4 @@
+command[check_load]=/usr/lib/nagios/plugins/check_load -w $ARG1$,$ARG2$,$ARG3$ -c $ARG4$,$ARG5$,$ARG6$
+command[check_zombie_procs]=/usr/lib/nagios/plugins/check_procs -w $ARG1$ -c $ARG2$ -s Z
+command[check_total_procs]=/usr/lib/nagios/plugins/check_procs -w $ARG1$ -c $ARG2$
+command[check_all_disks]=/usr/lib/nagios/plugins/check_disk -w $ARG1$ -c $ARG2$ -e
