@@ -1,4 +1,4 @@
-class admin::apt-cacher-ng {
+class admin::apt-cacher-ng::server {
   package { 'apt-cacher-ng':
     ensure => latest,
   }

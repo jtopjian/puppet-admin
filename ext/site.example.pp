@@ -4,7 +4,7 @@ include admin::params::cloud
 
 # Configure filebucket backup
 filebucket { "main":
-    server => $::params::private_hostname,
+    server => $::admin::params::private_hostname,
     path => false,
 }
 

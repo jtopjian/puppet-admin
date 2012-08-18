@@ -24,6 +24,7 @@ node base_server {
 node basic_server inherits base_server {
   class { 'admin::basepackages': }
   class { 'puppet': puppet_server => $::admin::params::puppet_server }
+  class { 'admin::apt-cacher-ng::client': server => $::admin::params::puppet_server }
   class { 'admin::mail::postfix': relayhost => $::admin::params::postfix_relay_host }
   class { 'admin::rsyslog::client': rsyslog_server => $::admin::params::rsyslog_server }
 }

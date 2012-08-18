@@ -33,7 +33,7 @@ class admin::util-server (
   }
 
   # Set up apt-cacher
-  class { 'admin::apt-cacher-ng': }
+  class { 'admin::apt-cacher-ng::server': }
 
   # Set up MySQL server
   class { 'mysql::server':

@@ -30,7 +30,7 @@ class admin::puppet-master (
   # Configure Puppet + passenger + dashboard
   class { 'puppet':
     master                  => true,
-    agent                   => false,
+    agent                   => true,
     autosign                => true,
     puppet_passenger        => true,
     storeconfigs            => true,
