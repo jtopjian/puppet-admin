@@ -1,6 +1,8 @@
 # cloud configuration
 
 class admin::cloud::controller {
+  class { 'mysql::server::account_security': }
+
   class { 'openstack::controller':
     public_address        => $::admin::params::cloud::controller_public_ip,
     public_interface      => $::admin::params::cloud::public_interface,
@@ -8,7 +10,6 @@ class admin::cloud::controller {
     internal_address      => $::admin::params::cloud::controller_private_ip,
     mysql_root_password   => $::admin::params::cloud::mysql_root_password,
     rabbit_password       => $::admin::params::cloud::rabbit_password,
-    allowed_hosts         => $::admin::params::cloud::mysql_allowed_hosts,
     admin_email           => $::admin::params::cloud::keystone_admin_email,
     admin_password        => $::admin::params::cloud::keystone_admin_password,
     keystone_db_password  => $::admin::params::cloud::keystone_mysql_password,
@@ -23,12 +24,17 @@ class admin::cloud::controller {
     num_networks          => $::admin::params::cloud::num_networks,
     floating_range        => $::admin::params::cloud::floating_range,
     keystone_admin_tenant => $::admin::params::cloud::keystone_admin_tenant,
-    db_host               => $::admin::params::cloud::controller_private_ip,
     verbose               => 'True',
     network_manager       => 'nova.network.manager.VlanManager',
     network_config        => {
         vlan_start => $::admin::params::cloud::vlan_start,
     },
+  }
+
+  class { 'openstack::auth_file': 
+    admin_password       => $::admin::params::cloud::keystone_admin_password,
+    keystone_admin_token => $::admin::params::cloud::keystone_admin_token,
+    admin_tenant         => $::admin::params::cloud::keystone_admin_tenant,
   }
 
   # Misc options
@@ -68,10 +74,10 @@ class admin::cloud::controller {
   apache::vhost::redirect { $::admin::params::cloud::controller_public_hostname:
     priority   => '1',
     port       => '80',
-    dest       => "https://${::params::cloud::controller_public_hostname}",
+    dest       => "https://${::admin::params::cloud::controller_public_hostname}",
   }
 
-  apache::vhost { "default-ssl-${::params::cloud::controller_public_hostname}":
+  apache::vhost { "default-ssl-${::admin::params::cloud::controller_public_hostname}":
     priority   => '1',
     servername => $::admin::params::cloud::controller_public_hostname,
     ssl        => true,
@@ -83,17 +89,18 @@ class admin::cloud::controller {
 
 class admin::cloud::compute { 
 
-  class { 'openstack::nova::compute': 
+  class { 'openstack::compute': 
+    private_interface   => $::admin::params::cloud::private_interface,
     internal_address    => $::admin::params::private_ip,
     nova_user_password  => $::admin::params::cloud::nova_admin_password,
     rabbit_password     => $::admin::params::cloud::rabbit_password,
-    public_interface    => undef,
-    private_interface   => $::admin::params::cloud::private_interface,
     vncproxy_host       => $::admin::params::cloud::controller_public_hostname,
   }
 
   # Exported config - see cloud::controller
-  Nova_config <<||>>
+  Nova_config <<| title == 'rabbit_host' |>>
+  Nova_config <<| title == 'sql_connection' |>>
+  Nova_config <<| title == 'glance_api_servers' |>>
 
   # Nagios check
   admin::nagios::basic_proc_check_nrpe { 'nova-compute': 
@@ -105,6 +112,4 @@ class admin::cloud::compute {
   class { 'admin::nagios::check_kvm-pegged_nrpe': 
     contact_groups => ['sysadmins'],
   }
-   
-
 } 
