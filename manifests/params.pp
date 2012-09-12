@@ -32,8 +32,8 @@ class admin::params {
   $ssh_cloud_admin_key = 'AAAAB3NzaC1yc2EAAAADAQABAAABAQDOT/G9oCshcibDhpdcN4B5DIaKx57Zx3iExpMDkzf5B1dBsZqDAX+ZD5UWqvVZJ+bVbC4E3qxnOxUZokBK7r2exw8PkqkE/tEQ8RmAiFQpYbfq+s663F7exXsvo18014QtKNEPROaiiu7GO5kJYIR3D1AmyahQc6FvzHf/W/4bBniuuhDfgJw6bmFfoEhBgx+tHaatllZPrf0ZzgQZwawFGTSYMioSK1mIbHnkLKXCy1n6XstLa2di4nDQeOyyNkVOHFQURk+aeluEwm9+Mag5/mCZ4eXvaGEm1eA7UlP9pcR4mu6tr1CIifm/Br8nvjvKKqZCCRRobF6GG7fAeUR3'
 
   # IPs
-  $public_ip  = $::ipaddress_eth1
-  $private_ip = $::ipaddress_eth0
+  $public_ip  = $::ipaddress_eth0
+  $private_ip = $::ipaddress_eth1
 
   # rsyslog
   $rsyslog_server = '10.0.0.23'
@@ -109,9 +109,7 @@ class admin::params::cloud inherits params {
 
   $controller_public_hostname  = 'cloud.example.com'
   $controller_private_hostname = 'cloud.example.com'
-  $controller_public_ip        = '10.0.0.32'
-  $controller_private_ip       = '10.0.2.7'
+  $controller_public_ip        = '10.0.0.43'
+  $controller_private_ip       = '10.0.2.18'
 
-
-  # More MySQL
 }

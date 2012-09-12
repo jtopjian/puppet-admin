@@ -245,17 +245,19 @@ class admin::cloud::controller {
     'DEFAULT' => {
       'verbose'          => 'true',
       'debug'            => 'true',
+      'log_file'         => '/var/log/quantum/quantum-dhcp.log',
       'db_connection'    => $::admin::params::cloud::quantum_db,
       'interface_driver' => 'quantum.agent.linux.interface.OVSInterfaceDriver',
     }
   }
   $quantum_l3_settings = {
     'DEFAULT' => {
-      'verbose' => 'true', 
-      'debug'   => 'true',
-      'db_connection' => $::admin::params::cloud::quantum_db,
-      'interface_driver' => 'quantum.agent.linux.interface.OVSInterfaceDriver',
-      'external_network_bridge' => 'br-ext',
+      'verbose'                 => 'true', 
+      'debug'                   => 'true',
+      'log_file'                => '/var/log/quantum/quantum-l3.log',
+      'db_connection'           => $::admin::params::cloud::quantum_db,
+      'interface_driver'        => 'quantum.agent.linux.interface.OVSInterfaceDriver',
+      'external_network_bridge' => 'br-ext2',
     }
   }
 
@@ -279,12 +281,15 @@ class admin::cloud::controller {
       'sql_connection' => $::admin::params::cloud::quantum_db,
     },
     'OVS' => {
-      'bridge_mappings'     => 'default:br-int',
+      'bridge_mappings'     => 'default:br-int2',
       'network_vlan_ranges' => 'default:100:500',
       'core_plugin'         => 'quantum.plugins.openvswitch.ovs_quantum_plugin.OVSQuantumPluginV2',
+      'integration_bridge'  => 'br-int2',
     }
   }
   class { 'quantum::plugins::openvswitch':
+    private_bridge       => 'br-int2',
+    public_bridge        => 'br-ext2',
     openvswitch_settings => $ovs_settings,
   }
 
@@ -441,6 +446,7 @@ class admin::cloud::compute {
     }
   }
   class { 'quantum::plugins::openvswitch':
+    private_bridge       => 'tap0',
     controller           => false,
     openvswitch_settings => $ovs_settings,
   }
