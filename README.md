@@ -13,6 +13,8 @@ This will set up a full-stack which includes:
   * Postfix
 
 ```shell
+apt-get update && apt-get dist-upgrade
+ssh-keygen
 apt-get install -y git rake vim puppet
 cd /etc/puppet/modules
 git clone https://github.com/jtopjian/puppet-admin admin
@@ -26,6 +28,8 @@ vi bootstrap.pp
 # Edit bootstrap.pp to suit your environment
 puppet apply --verbose bootstrap.pp
 ```
+
+* Note that you might have to apply the boostrap manifest up to 3 times due to very intricate service requirements.
 
 Post-Bootstrap Configuration
 ----------------------------

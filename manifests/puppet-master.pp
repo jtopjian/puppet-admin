@@ -25,7 +25,8 @@ class admin::puppet-master (
   }
 
   # Make sure the apt repo is added before puppet is configured
-  Apt::Source['puppet'] -> Class['puppet']
+  Apt::Source['puppet'] -> Class['puppetdb::server']
+  Apt::Source['puppet'] -> Class['puppet::master']
 
   # Configure Puppet + passenger + dashboard
   class { 'puppet':
@@ -44,7 +45,9 @@ class admin::puppet-master (
     dashboard_db            => 'puppet_dashboard',
     dashboard_site          => $puppet_dashboard_site,
     dashboard_passenger     => true,
-    dashboard_port          => '81',
+    dashboard_port          => '3000',
+    require                 => Apt::Source['puppet'],
+    before                  => File['/etc/default/puppet-dashboard-workers'],
   }
 
   class { 'dashboard::db::mysql': 
@@ -60,22 +63,22 @@ class admin::puppet-master (
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    require => Class['dashboard'],
+    require => Package['puppet-dashboard'],
   }
 
   service { 'puppet-dashboard-workers':
     ensure     => running,
     enable     => true,
-    hasrestart => true,
-    hasstatus  => true,
+    require    => Package['puppet-dashboard'],
   }
 
   class { 'puppetdb':
     database => 'embedded',
-    require  => Class['puppet'],
+    before   => Package['puppetmaster'],
   }
   class { 'puppetdb::master::config':
-    require => Class['puppet'],
+    require => Class['puppetdb'],
+    before  => Package['puppetmaster'],
   }
 
 }
