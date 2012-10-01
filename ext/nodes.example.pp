@@ -4,7 +4,7 @@ node base_server {
   class { 'admin::ssh::hostkeys': }
   class { 'admin::mail::aliases': }
   class { 'admin::security-updates': }
-  class { 'admin::hosts': ip_address => $::admin::params:_ip }
+  class { 'admin::hosts': ip_address => $::admin::params::private_ip }
   class { 'admin::fail2ban': ignore_networks => $::admin::params::fail2ban_ignore_networks }
   class { 'admin::nagios::nrpe': allowed_hosts => $::admin::params::nrpe_allowed_hosts }
   class { 'admin::nagios::basic_host_checks': contact_groups => 'oncall' }
@@ -46,7 +46,7 @@ node 'util.example.com' inherits base_server {
     postfix_my_networks          => $::admin::params::postfix_my_networks,
   }
   class { 'admin::nagios::server': admin_password => $::admin::params::nagios_admin_password }
-  class { 'admin::rsyslog::server': interface => $::admin::params:_ip }
+  class { 'admin::rsyslog::server': interface => $::admin::params::private_ip }
   class { 'admin::nagios::check_mysql_nrpe': contact_groups => 'sysadmins' }
 }
 

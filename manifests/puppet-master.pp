@@ -34,17 +34,17 @@ class admin::puppet-master (
     autosign                => true,
     puppet_passenger        => true,
     storeconfigs            => true,
-    storeconfigs_dbadapter  => 'mysql',
-    storeconfigs_dbuser     => 'puppet',
-    storeconfigs_dbpassword => $puppet_storeconfigs_password,
-    storeconfigs_dbserver   => 'localhost',
+    storeconfigs_dbadapter  => 'puppetdb',
+    #storeconfigs_dbuser     => 'puppet',
+    #storeconfigs_dbpassword => $puppet_storeconfigs_password,
+    #storeconfigs_dbserver   => 'localhost',
     dashboard               => true,
     dashboard_user          => $puppet_dashboard_user,
     dashboard_password      => $puppet_dashboard_password,
     dashboard_db            => 'puppet_dashboard',
     dashboard_site          => $puppet_dashboard_site,
     dashboard_passenger     => true,
-    dashboard_port          => '8080',
+    dashboard_port          => '81',
   }
 
   class { 'dashboard::db::mysql': 
@@ -68,6 +68,14 @@ class admin::puppet-master (
     enable     => true,
     hasrestart => true,
     hasstatus  => true,
+  }
+
+  class { 'puppetdb':
+    database => 'embedded',
+    require  => Class['puppet'],
+  }
+  class { 'puppetdb::master::config':
+    require => Class['puppet'],
   }
 
 }

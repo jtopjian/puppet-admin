@@ -50,20 +50,18 @@ class admin::util-server (
   }
 
   # Make sure the default docroot is still in place
-  apache::vhost { "default-${::params::util_public_hostname}":
+  apache::vhost { "default-${::admin::params::util_public_hostname}":
     priority   => '1',
     servername => $public_hostname,
     port       => '80',
     docroot    => '/var/www',
-    log_name   => $::admin::params::util_public_hostname,
   }
 
-  apache::vhost { "default-ssl-${::params::util_public_hostname}":
+  apache::vhost { "default-ssl-${::admin::params::util_public_hostname}":
     priority   => '1',
     servername => $public_hostname,
     ssl        => true,
     port       => 443,
     docroot    => '/var/www',
-    log_name   => $::admin::params::util_public_hostname,
   }
 }

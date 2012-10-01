@@ -18,6 +18,9 @@ cd /etc/puppet/modules
 git clone https://github.com/jtopjian/puppet-admin admin
 cd admin/ext
 bash util-bootstrap.sh
+cd ../manifests
+vi params.pp
+# Edit params.pp to suit your environment
 cd ../tests
 vi bootstrap.pp
 # Edit bootstrap.pp to suit your environment

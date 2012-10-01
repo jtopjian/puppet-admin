@@ -69,7 +69,7 @@ class admin::params::cloud inherits params {
 
   # Horizon
   $horizon_secret_key       = 'dummy_secret_key'
-  $horizon_app_links        = "[['Nagios','http://${::params::util_public_hostname}/nagios3'],]"
+  $horizon_app_links        = "[['Nagios','http://${::admin::params::util_public_hostname}/nagios3'],]"
 
   # RabbitMQ
   $rabbit_password          = 'password'

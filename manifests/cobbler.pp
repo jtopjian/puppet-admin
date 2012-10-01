@@ -22,67 +22,73 @@ class admin::cobbler (
     require => Package['cobbler'],
   }
 
-  # Configure /etc/cobbler/modules.conf
-  admin::functions::replace { '/etc/cobbler/modules.conf dns': 
-    file        => '/etc/cobbler/modules.conf',
-    pattern     => 'module = manage_bind',
-    replacement => 'module = manage_dnsmasq',
+  Ini_setting {
+    require => Package['cobbler'],
   }
-  admin::functions::replace { '/etc/cobbler/modules.conf dhcp':
-    file        => '/etc/cobbler/modules.conf',
-    pattern     => 'module = manage_isc',
-    replacement => 'module = manage_dnsmasq',
+
+  File_line {
+    require => Package['cobbler'],
+  }
+
+  # Configure /etc/cobbler/modules.conf
+  ini_setting { '/etc/cobbler/modules.conf dns':
+    path    => '/etc/cobbler/modules.conf',
+    section => 'dns',
+    setting => 'module',
+    value   => 'manage_dnsmasq',
+  }
+
+  ini_setting { '/etc/cobbler/modules.conf dhcp':
+    path    => '/etc/cobbler/modules.conf',
+    section => 'dhcp',
+    setting => 'module',
+    value   => 'manage_dnsmasq',
   }
 
   # Configure /etc/cobbler/dnsmasq.template
-  admin::functions::ensure_key_value { '/etc/cobbler/dnsmasq.template server':
-    file      => '/etc/cobbler/dnsmasq.template',
-    key       => 'server',
-    value     => $dns_upstream_server,
-    delimiter => '='
+  ini_setting { '/etc/cobbler/dnsmasq.template server':
+    path    => '/etc/cobbler/dnsmasq.template',
+    section => '',
+    setting => 'server',
+    value   => $dns_upstream_server,
   }
 
-  admin::functions::ensure_key_value { '/etc/cobbler/dnsmasq.template dhcp-range':
-    file      => '/etc/cobbler/dnsmasq.template',
-    key       => 'dhcp-range',
-    value     => "${dhcp_start_range},${dhcp_stop_range}",
-    delimiter => '='
+  ini_setting { '/etc/cobbler/dnsmasq.template dhcp-range':
+    path    => '/etc/cobbler/dnsmasq.template',
+    section => '',
+    setting => 'dhcp-range',
+    value   => "${dhcp_start_range},${dhcp_stop_range}",
   }
 
   # Configure /etc/cobbler/settings
-  admin::functions::ensure_key_value { '/etc/cobbler/settings puppet_auto_setup':
-    file      => '/etc/cobbler/settings',
-    key       => 'puppet_auto_setup',
-    value     => '1',
-    delimiter => ': ',
+  file_line { '/etc/cobbler/settings puppet_auto_setup':
+    path  => '/etc/cobbler/settings',
+    line  => 'puppet_auto_setup: 1',
+    match => 'puppet_auto_setup: ',
   }
 
-  admin::functions::ensure_key_value { '/etc/cobbler/settings manage_dhcp':
-    file      => '/etc/cobbler/settings',
-    key       => 'manage_dhcp',
-    value     => '1',
-    delimiter => ': ',
+  file_line { '/etc/cobbler/settings manage_dhcp':
+    path  => '/etc/cobbler/settings',
+    line  => 'manage_dhcp: 1',
+    match => 'manage_dhcp: ',
   }
 
-  admin::functions::ensure_key_value { '/etc/cobbler/settings manage_dns':
-    file      => '/etc/cobbler/settings',
-    key       => 'manage_dns',
-    value     => '1',
-    delimiter => ': ',
+  file_line { '/etc/cobbler/settings manage_dns':
+    path  => '/etc/cobbler/settings',
+    line  => 'manage_dns: 1',
+    match => 'manage_dns: ',
   }
 
-  admin::functions::ensure_key_value { '/etc/cobbler/settings next_server':
-    file      => '/etc/cobbler/settings',
-    key       => 'next_server',
-    value     => $next_server,
-    delimiter => ': ',
+  file_line { '/etc/cobbler/settings next_server':
+    path  => '/etc/cobbler/settings',
+    line  => "next_server: ${next_server}",
+    match => 'next_server: ',
   }
 
-  admin::functions::ensure_key_value { '/etc/cobbler/settings server':
-    file      => '/etc/cobbler/settings',
-    key       => 'server',
-    value     => $server,
-    delimiter => ': ',
+  file_line { '/etc/cobbler/settings server':
+    path  => '/etc/cobbler/settings',
+    line  => "server: ${server}",
+    match => '^server: ',
   }
 
   # Get loaders

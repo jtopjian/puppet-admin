@@ -51,11 +51,10 @@ class admin::nagios::server (
     require => Package['nagios3'],
   }
 
-  admin::functions::ensure_key_value { '/etc/nagios3/apache2.conf AuthUserFile':
-    file      => '/etc/nagios3/apache2.conf',
-    key       => 'AuthUserFile',
-    value     => $htpasswd,
-    delimiter => ' ',
+  file_line { '/etc/nagios3/apache2.conf AuthUserFile':
+    path      => '/etc/nagios3/apache2.conf',
+    line      => "AuthUserFile ${htpasswd}",
+    match     => 'AuthUserFile ',
   }
 
   Nagios_host {

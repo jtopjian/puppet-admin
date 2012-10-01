@@ -19,6 +19,8 @@ git clone https://github.com/puppetlabs/puppetlabs-ntp ntp
 git clone https://github.com/puppetlabs/puppetlabs-passenger passenger
 git clone https://github.com/jtopjian/puppetlabs-dashboard dashboard
 git clone https://github.com/puppetlabs/puppetlabs-firewall firewall
+git clone https://github.com/cprice-puppet/puppetlabs-inifile inifile
+git clone https://github.com/puppetlabs/puppetlabs-puppetdb puppetdb
 wget http://forge.puppetlabs.com/system/releases/p/puppetlabs/puppetlabs-ruby-0.0.1.tar.gz
 tar xzvf puppetlabs-ruby-0.0.1.tar.gz
 mv puppetlabs-ruby-0.0.1 ruby
