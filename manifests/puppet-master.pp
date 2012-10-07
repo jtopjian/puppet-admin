@@ -7,11 +7,12 @@ class admin::puppet-master (
 
   # Add Puppet apt repo
   apt::source { 'puppet':
-    location   => 'http://apt.puppetlabs.com',
-    release    => $::lsbdistcodename,
-    repos      => 'main',
-    key        => '4BD6EC30',
-    key_server => 'subkeys.pgp.net',
+    location    => 'http://panel.terrarum.net/puppet',
+    release     => $::lsbdistcodename,
+    repos       => 'main',
+    key         => 'F8793AF4',
+    key_server  => 'subkeys.pgp.net',
+    include_src => false,
   }
 
   # Setup activerecord
@@ -74,11 +75,10 @@ class admin::puppet-master (
 
   class { 'puppetdb':
     database => 'embedded',
-    before   => Package['puppetmaster'],
+    require  => Package['puppetmaster'],
   }
   class { 'puppetdb::master::config':
     require => Class['puppetdb'],
-    before  => Package['puppetmaster'],
   }
 
 }
