@@ -2,7 +2,8 @@ class admin::puppet-master (
   $puppet_dashboard_user,
   $puppet_dashboard_password,
   $puppet_dashboard_site,
-  $puppet_storeconfigs_password
+  $puppet_storeconfigs_password,
+  $puppetdb = false
 ) {
 
   # Add Puppet apt repo
@@ -26,29 +27,53 @@ class admin::puppet-master (
   }
 
   # Make sure the apt repo is added before puppet is configured
-  Apt::Source['puppet'] -> Class['puppetdb::server']
   Apt::Source['puppet'] -> Class['puppet::master']
 
   # Configure Puppet + passenger + dashboard
-  class { 'puppet':
-    master                  => true,
-    agent                   => true,
-    autosign                => true,
-    puppet_passenger        => true,
-    storeconfigs            => true,
-    storeconfigs_dbadapter  => 'puppetdb',
-    #storeconfigs_dbuser     => 'puppet',
-    #storeconfigs_dbpassword => $puppet_storeconfigs_password,
-    #storeconfigs_dbserver   => 'localhost',
-    dashboard               => true,
-    dashboard_user          => $puppet_dashboard_user,
-    dashboard_password      => $puppet_dashboard_password,
-    dashboard_db            => 'puppet_dashboard',
-    dashboard_site          => $puppet_dashboard_site,
-    dashboard_passenger     => true,
-    dashboard_port          => '3000',
-    require                 => Apt::Source['puppet'],
-    before                  => File['/etc/default/puppet-dashboard-workers'],
+  if $puppetdb {
+    Apt::Source['puppet'] -> Class['puppetdb::server']
+    class { 'puppet':
+      master                  => true,
+      agent                   => true,
+      autosign                => true,
+      puppet_passenger        => true,
+      storeconfigs            => true,
+      storeconfigs_dbadapter  => 'puppetdb',
+      dashboard               => true,
+      dashboard_user          => $puppet_dashboard_user,
+      dashboard_password      => $puppet_dashboard_password,
+      dashboard_db            => 'puppet_dashboard',
+      dashboard_site          => $puppet_dashboard_site,
+      dashboard_passenger     => true,
+      dashboard_port          => '3000',
+      require                 => Apt::Source['puppet'],
+      before                  => File['/etc/default/puppet-dashboard-workers'],
+    }
+
+    class { 'puppetdb':
+      database => 'embedded',
+      require  => Package['puppetmaster'],
+    }
+    class { 'puppetdb::master::config':
+      require => Class['puppetdb'],
+    }
+  } else {
+    class { 'puppet':
+      master                  => true,
+      agent                   => true,
+      autosign                => true,
+      puppet_passenger        => true,
+      storeconfigs            => false,
+      dashboard               => true,
+      dashboard_user          => $puppet_dashboard_user,
+      dashboard_password      => $puppet_dashboard_password,
+      dashboard_db            => 'puppet_dashboard',
+      dashboard_site          => $puppet_dashboard_site,
+      dashboard_passenger     => true,
+      dashboard_port          => '3000',
+      require                 => Apt::Source['puppet'],
+      before                  => File['/etc/default/puppet-dashboard-workers'],
+    }
   }
 
   class { 'dashboard::db::mysql': 
@@ -71,14 +96,6 @@ class admin::puppet-master (
     ensure     => running,
     enable     => true,
     require    => Package['puppet-dashboard'],
-  }
-
-  class { 'puppetdb':
-    database => 'embedded',
-    require  => Package['puppetmaster'],
-  }
-  class { 'puppetdb::master::config':
-    require => Class['puppetdb'],
   }
 
 }
