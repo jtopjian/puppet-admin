@@ -17,7 +17,7 @@ class admin::util-server (
 ) {
 
   # Set up the puppetmaster server
-  class { 'admin::puppet-master':
+  class { 'admin::puppet::master':
     puppet_storeconfigs_password => $puppet_storeconfigs_password,
     puppet_dashboard_user        => $puppet_dashboard_user,
     puppet_dashboard_password    => $puppet_dashboard_password,

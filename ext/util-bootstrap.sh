@@ -10,6 +10,7 @@ apt-get install -y puppet git rubygems rake
 cd /etc/puppet/modules
 git clone -b jtopjian-mods https://github.com/jtopjian/puppetlabs-puppet puppet
 git clone -b jtopjian-mods https://github.com/jtopjian/puppetlabs-apache apache
+git clone -b 3.x https://github.com/puppetlabs/puppetlabs-stdlib stdlib
 git clone https://github.com/puppetlabs/puppetlabs-openstack openstack
 cd openstack
 rake modules:clone

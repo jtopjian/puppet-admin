@@ -1,0 +1,14 @@
+---
+:backends: 
+  - yaml
+  - puppet
+
+:hierarchy: 
+  - %{fqdn}
+  - common
+
+:yaml:
+  :datadir: /etc/puppet/hiera
+
+:puppet:
+  :datasource: admin::data

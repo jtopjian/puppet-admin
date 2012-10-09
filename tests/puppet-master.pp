@@ -7,7 +7,7 @@ class { 'mysql::server':
 }
 class { 'mysql::server::account_security': }
   
-class { 'admin::puppet-master': 
+class { 'admin::puppet::master': 
   puppet_dashboard_user        => 'puppet-dashboard',
   puppet_dashboard_password    => 'password',
   puppet_dashboard_site        => $::fqdn,

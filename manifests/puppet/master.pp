@@ -1,8 +1,9 @@
-class admin::puppet-master (
+class admin::puppet::master (
   $puppet_dashboard_user,
   $puppet_dashboard_password,
   $puppet_dashboard_site,
   $puppet_storeconfigs_password,
+  $hiera    = true,
   $puppetdb = false
 ) {
 
@@ -27,7 +28,7 @@ class admin::puppet-master (
   }
 
   # Make sure the apt repo is added before puppet is configured
-  Apt::Source['puppet'] -> Class['puppet::master']
+  Apt::Source['puppet'] -> Class['::puppet::master']
 
   # Configure Puppet + passenger + dashboard
   if $puppetdb {
@@ -96,6 +97,10 @@ class admin::puppet-master (
     ensure     => running,
     enable     => true,
     require    => Package['puppet-dashboard'],
+  }
+
+  if $hiera {
+    class { 'admin::puppet::hiera': }
   }
 
 }
