@@ -1,5 +1,6 @@
 class admin::cobbler (
   $dns_upstream_server = '8.8.8.8',
+  $password,
   $dhcp_start_range,
   $dhcp_stop_range,
   $next_server,
@@ -90,6 +91,14 @@ class admin::cobbler (
     line  => "server: ${server}",
     match => '^server: ',
   }
+
+  # Set the password
+  $p = "cobbler:Cobbler:\$(printf \"cobbler:Cobbler:${password}\" | md5sum - | sed -e 's/\s\+-//')"
+  exec { "echo ${p} > /etc/cobbler/users.digest":
+    path   => ['/bin', '/usr/bin'],
+    unless => "grep \$(echo ${p}) /etc/cobbler/users.digest",
+  }
+  
 
   # Get loaders
   exec { 'cobbler-get-loaders':

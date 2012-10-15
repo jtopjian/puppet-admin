@@ -4,30 +4,32 @@
 # without storedconfigs set up
 
 class admin::util-server (
+  $util_public_hostname,
   $mysql_root_password,
   $puppet_dashboard_user,
   $puppet_dashboard_password,
   $puppet_dashboard_site,
-  $puppet_storeconfigs_password,
   $cobbler_dhcp_start_range,
   $cobbler_dhcp_stop_range,
   $cobbler_next_server,
   $cobbler_server,
-  $postfix_my_networks,
+  $cobbler_password,
+  $postfix_my_networks
 ) {
 
   # Set up the puppetmaster server
   class { 'admin::puppet::master':
-    puppet_storeconfigs_password => $puppet_storeconfigs_password,
     puppet_dashboard_user        => $puppet_dashboard_user,
     puppet_dashboard_password    => $puppet_dashboard_password,
     puppet_dashboard_site        => $puppet_dashboard_site,
+    puppetdb                     => true,
   }
 
   # Set up cobbler
   class { 'admin::cobbler':
     next_server      => $cobbler_next_server,
     server           => $cobbler_server,
+    password         => $cobbler_password,
     dhcp_start_range => $cobbler_dhcp_start_range,
     dhcp_stop_range  => $cobbler_dhcp_stop_range,
   }
@@ -50,14 +52,14 @@ class admin::util-server (
   }
 
   # Make sure the default docroot is still in place
-  apache::vhost { "default-${::admin::params::util_public_hostname}":
+  apache::vhost { "default-${util_public_hostname}":
     priority   => '1',
     servername => $public_hostname,
     port       => '80',
     docroot    => '/var/www',
   }
 
-  apache::vhost { "default-ssl-${::admin::params::util_public_hostname}":
+  apache::vhost { "default-${util_public_hostname}-ssl":
     priority   => '1',
     servername => $public_hostname,
     ssl        => true,

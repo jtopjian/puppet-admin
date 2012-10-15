@@ -8,6 +8,9 @@ class admin::data::dc2 {
   $util_public_hostname  = 'util.dc2.example.com'
   $util_private_hostname = 'util.dc2.private.example.com'
   $util_pxe_hostname     = 'util.dc2.pxe.example.com'
+  $util_public_ip        = '192.168.0.2'
+  $util_private_ip       = '192.168.2.1'   
+  $util_pxe_ip           = '192.168.254.1' 
 
   # Cloud Controller
   $cloud_public_hostname  = 'cloud.dc2.example.com'

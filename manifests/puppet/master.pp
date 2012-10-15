@@ -2,7 +2,7 @@ class admin::puppet::master (
   $puppet_dashboard_user,
   $puppet_dashboard_password,
   $puppet_dashboard_site,
-  $puppet_storeconfigs_password,
+  $puppet_storeconfigs_password = 'password',
   $hiera    = true,
   $puppetdb = false
 ) {

@@ -8,6 +8,9 @@ class admin::data::dc1 {
   $util_public_hostname  = 'util.dc1.example.com'
   $util_private_hostname = 'util.dc1.private.example.com'
   $util_pxe_hostname     = 'util.dc1.pxe.example.com'
+  $util_public_ip        = '192.168.0.1'
+  $util_private_ip       = '192.168.1.1'   
+  $util_pxe_ip           = '192.168.255.1' 
 
   # Postfix
   $postfix_relay_host = $util_private_hostname

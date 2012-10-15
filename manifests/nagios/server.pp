@@ -53,8 +53,8 @@ class admin::nagios::server (
 
   file_line { '/etc/nagios3/apache2.conf AuthUserFile':
     path      => '/etc/nagios3/apache2.conf',
-    line      => "AuthUserFile ${htpasswd}",
-    match     => 'AuthUserFile ',
+    line      => "\tAuthUserFile ${htpasswd}",
+    match     => '\tAuthUserFile ',
   }
 
   Nagios_host {
