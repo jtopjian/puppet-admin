@@ -2,7 +2,6 @@
 node base {
   class { 'ntp': }
   class { 'stdlib': }
-  class { 'admin::facter': }
   class { 'admin::ssh::hostkeys': }
   class { 'admin::mail::aliases': }
   class { 'admin::security-updates': }
@@ -38,7 +37,6 @@ node 'util.example.com' inherits base {
   class { 'admin::basepackages': }
   class { 'admin::backups::mysql': }
   class { 'admin::util-server':
-  admin::functions::facter_dotd { 'location': value => 'dc1' }
     util_public_hostname         => hiera('util_public_hostname'),
     mysql_root_password          => hiera('mysql_root_password'),
     puppet_dashboard_user        => hiera('puppet_dashboard_user'),
