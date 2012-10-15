@@ -4,7 +4,8 @@
   - puppet
 
 :hierarchy: 
-  - %{fqdn}
+  - %{fqdn_underscore}
+  - %{location}
   - common
 
 :yaml:
