@@ -25,7 +25,7 @@ class admin::cloud::controller {
     cinder_user_password   => hiera('cinder_keystone_password'),
   # Required Horizon
     secret_key             => hiera('horizon_secret_key'),
-    network_manager        => hiera('nova.network.manager.FlatDHCPManager',
+    network_manager        => hiera('nova.network.manager.FlatDHCPManager'),
     fixed_range            => hiera('fixed_range'),
     floating_range         => hiera('floating_range'),
     db_host                => hiera('mysql_host'),
@@ -51,7 +51,7 @@ class admin::cloud::controller {
     horizon_app_links      => hiera('horizon_app_links'),
     # Genera
     verbose                => 'True',
-    export_resources       => false,
+    export_resources       => true,
   }
 
   # Admin / test files
