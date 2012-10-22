@@ -29,6 +29,7 @@ class admin::puppet::master (
 
   # Make sure the apt repo is added before puppet is configured
   Apt::Source['puppet'] -> Class['::puppet::master']
+  Class['mysql::server'] -> Class['puppet']
 
   # Configure Puppet + passenger + dashboard
   if $puppetdb {

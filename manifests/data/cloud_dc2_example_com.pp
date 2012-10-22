@@ -6,8 +6,7 @@ class admin::data::cloud_dc2_example_com {
   # MySQL
   $mysql_root_password      = 'password'
   $mysql_bind_address       = '0.0.0.0'
-  $mysql_allowed_hosts      = ["${::admin::data::dc2::private_network}", '127.0.0.%']
-  $mysql_host               = $::admin::data::dc2::cloud_private_hostname
+  $mysql_allowed_hosts      = [$::admin::data::dc2::private_mysql_network, $::admin::data::dc2::public_network_mysql, '127.0.0.%']
 
   # Keystone
   $keystone_admin_token     = '12345'
@@ -32,12 +31,10 @@ class admin::data::cloud_dc2_example_com {
   $horizon_app_links        = "[['Nagios','http://${::admin::params::data::util_public_hostname}/nagios3'],]"
 
   # RabbitMQ
-  $rabbit_password          = 'password'
   $rabbit_user              = 'nova'
   $rabbit_host              = $::admin::data::dc2::cloud_private_hostname
 
   # Nova
-  $nova_admin_password      = 'nova'
   $vlan_start               = '100'
   $fixed_range              = '10.0.0.0/8'
   $num_networks             = '255'

@@ -1,15 +1,19 @@
+#
 class admin::data::dc1 {
 
   # Subnets
-  $private_network = '192.168.1.0/24'
-  $pxe_network     = '192.168.255.0/24'
+  $public_network        = '10.1.0.0/24'
+  $private_network       = '10.0.0.0/24'
+  $public_network_mysql  = '10.1.0.%'
+  $private_network_mysql = '10.0.0.%'
+  $pxe_network           = '192.168.255.0/24'
 
   # Utility Server
-  $util_public_hostname  = 'util.dc1.example.com'
-  $util_private_hostname = 'util.dc1.private.example.com'
-  $util_pxe_hostname     = 'util.dc1.pxe.example.com'
-  $util_public_ip        = '192.168.0.1'
-  $util_private_ip       = '192.168.1.1'   
+  $util_public_hostname  = 'p2.dc1.example.com'
+  $util_private_hostname = 'p2.dc1.private.example.com'
+  $util_pxe_hostname     = 'p2.dc1.pxe.example.com'
+  $util_public_ip        = '10.1.0.28'
+  $util_private_ip       = '10.0.0.68'   
   $util_pxe_ip           = '192.168.255.1' 
 
   # Postfix
@@ -20,26 +24,46 @@ class admin::data::dc1 {
   $nrpe_allowed_hosts = [$private_network, $pxe_network, '127.0.0.1']
   
   # rsyslog
-  $rsyslog_server = '192.168.1.1'
+  $rsyslog_server = '10.1.0.28'
 
   # fail2ban
   $fail2ban_ignore_networks = "${private_network}, 127.0.0.1"
+
+  # SSH
+  $ssh_util_admin_key  = ''
+  $ssh_cloud_admin_key = ''
 
   # Cloud Stuff
 
   # Cloud Controller
   $cloud_public_hostname  = 'cloud.dc1.example.com'
   $cloud_private_hostname = 'cloud.dc1.private.example.com'
-  $cloud_public_ip        = '0.0.0.0'
-  $cloud_private_ip       = '192.168.1.2'
+  $cloud_public_ip        = '10.1.0.32'
+  $cloud_private_ip       = '10.0.0.66'
+  $cloud_mysql_host       = $cloud_public_hostname
+
+  # Rabbit
+  $rabbit_password          = 'password'
 
   # Nova
+  $nova_keystone_password   = 'nova'
   $nova_mysql_user          = 'nova'
   $nova_mysql_dbname        = 'nova'
   $nova_mysql_password      = 'nova'
-  $libvirt_type             = 'kvm'
-  $private_interface        = 'eth0'
-  $public_interface         = 'eth1'
-  $nova_db = "mysql://${nova_mysql_user}:${nova_mysql_password}@${mysql_host}/${nova_mysql_dbname}"
+  $nova_admin_password      = 'nova'
+  $libvirt_type             = 'qemu'
+  $private_interface        = 'eth1'
+  $public_interface         = 'eth0'
+  $nova_db = "mysql://${nova_mysql_user}:${nova_mysql_password}@${cloud_mysql_host}/${nova_mysql_dbname}"
+
+  # Cinder
+  $cinder_keystone_password = 'password'
+  $cinder_mysql_password    = 'password'
+  $cinder_mysql_dbname      = 'cinder'
+  $cinder_mysql_user        = 'cinder'
+  $cinder_db = "mysql://${cinder_mysql_user}:${cinder_mysql_password}@${cloud_mysql_host}/${cinder_mysql_dbname}"
+
+  # Glance
+  $glance_api_servers = "${::admin::data::dc1::cloud_public_hostname}:9292"
 
 }
