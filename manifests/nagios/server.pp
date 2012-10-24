@@ -55,6 +55,8 @@ class admin::nagios::server (
     path      => '/etc/nagios3/apache2.conf',
     line      => "\tAuthUserFile ${htpasswd}",
     match     => '\tAuthUserFile ',
+    notify    => Service['nagios3'],
+    require   => Package['nagios3'],
   }
 
   Nagios_host {

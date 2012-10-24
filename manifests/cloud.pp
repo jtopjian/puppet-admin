@@ -91,7 +91,6 @@ class admin::cloud::controller {
 class admin::cloud::compute { 
   class { 'openstack::compute': 
     quantum               => false,
-    private_interface     => hiera('private_interface'),
     glance_api_servers    => hiera('glance_api_servers'),
     sql_connection        => hiera('nova_db'),
     internal_address      => hiera('private_ip'),
@@ -103,7 +102,10 @@ class admin::cloud::compute {
     libvirt_type          => hiera('libvirt_type'),
     migration_support     => true,
     vncserver_listen      => '0.0.0.0',
+    nova_volume           => 'nova-volumes',
   }
+
+  nova_config { 'vlan_interface': value => hiera('private_interface') }
 
 
 } 
