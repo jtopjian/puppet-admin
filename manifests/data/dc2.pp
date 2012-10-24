@@ -38,6 +38,7 @@ class admin::data::dc2 {
   $cloud_private_hostname = 'cloud.dc2.private.example.com'
   $cloud_public_ip        = '0.0.0.0'
   $cloud_private_ip       = '192.168.2.2'
+  $region                 = 'dc2'
 
   # Nagios
   $nrpe_allowed_hosts = [$cloud_public_ip, $cloud_private_ip, '127.0.0.1']

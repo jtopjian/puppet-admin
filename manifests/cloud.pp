@@ -26,6 +26,7 @@ class admin::cloud::controller {
     keystone_db_password   => hiera('keystone_mysql_password'),
     keystone_admin_token   => hiera('keystone_admin_token'),
     keystone_admin_tenant  => hiera('keystone_admin_tenant'),
+    region                 => hiera('region'),
     # Glance
     glance_db_password     => hiera('glance_mysql_password'),
     glance_user_password   => hiera('glance_keystone_password'),
@@ -100,6 +101,8 @@ class admin::cloud::compute {
     cinder_sql_connection => hiera('cinder_db'),
     vncproxy_host         => hiera('cloud_public_hostname'),
     libvirt_type          => hiera('libvirt_type'),
+    migration_support     => true,
+    vncserver_listen      => '0.0.0.0',
   }
 
 
