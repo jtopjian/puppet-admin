@@ -20,9 +20,6 @@ class admin::data::dc1 {
   $postfix_relay_host = $util_private_hostname
   $postfix_my_networks = ['127.0.0.0/8', '[::ffff:127.0.0.0]/104', '[::1]/128', $private_network, $pxe_network]
 
-  # Nagios
-  $nrpe_allowed_hosts = [$private_network, $pxe_network, '127.0.0.1']
-  
   # rsyslog
   $rsyslog_server = '10.1.0.28'
 
@@ -42,6 +39,9 @@ class admin::data::dc1 {
   $cloud_private_ip       = '10.0.0.66'
   $cloud_mysql_host       = $cloud_public_hostname
 
+  # Nagios
+  $nrpe_allowed_hosts = [$cloud_public_ip, $cloud_private_ip, '127.0.0.1']
+  
   # Rabbit
   $rabbit_password          = 'password'
 

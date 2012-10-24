@@ -3,55 +3,53 @@
 class admin::cloud::controller {
 
   class { 'openstack::controller':
-  # Required Network
+    # Network
+    network_manager        => 'nova.network.manager.VlanManager',
     public_address         => hiera('cloud_public_ip'),
     public_interface       => hiera('public_interface'),
     private_interface      => hiera('private_interface'),
-  # Required Database
+    fixed_range            => hiera('fixed_range'),
+    floating_range         => hiera('floating_range'),
+    num_networks           => hiera('num_networks'),
+    network_config         => {
+      'vlan_start' => hiera('vlan_start'),
+    },
+    # Database
+    db_type                => 'mysql',
+    mysql_account_security => true,
+    db_host                => hiera('cloud_mysql_host'),
     mysql_root_password    => hiera('mysql_root_password'),
-  # Required Keystone
+    allowed_hosts          => hiera('mysql_allowed_hosts'),
+    # Keystone
     admin_email            => hiera('keystone_admin_email'),
     admin_password         => hiera('keystone_admin_password'),
     keystone_db_password   => hiera('keystone_mysql_password'),
     keystone_admin_token   => hiera('keystone_admin_token'),
-  # Required Glance
-    glance_db_password     => hiera('glance_mysql_password'),
-    glance_user_password   => hiera('glance_keystone_password'),
-  # Required Nov a
-    nova_db_password       => hiera('nova_mysql_password'),
-    nova_user_password     => hiera('nova_keystone_password'),
-  # cinder
-    cinder_db_password     => hiera('cinder_mysql_password'),
-    cinder_user_password   => hiera('cinder_keystone_password'),
-  # Required Horizon
-    secret_key             => hiera('horizon_secret_key'),
-    network_manager        => 'nova.network.manager.FlatDHCPManager',
-    fixed_range            => hiera('fixed_range'),
-    floating_range         => hiera('floating_range'),
-    db_host                => hiera('cloud_mysql_host'),
-    db_type                => 'mysql',
-    mysql_account_security => true,
-    # TODO - this should not allow all
-    allowed_hosts          => hiera('mysql_allowed_hosts'),
-    # Keystone
     keystone_admin_tenant  => hiera('keystone_admin_tenant'),
     # Glance
+    glance_db_password     => hiera('glance_mysql_password'),
+    glance_user_password   => hiera('glance_keystone_password'),
     glance_api_servers     => hiera('glance_api_servers'),
     # Nova
+    nova_db_password       => hiera('nova_mysql_password'),
+    nova_user_password     => hiera('nova_keystone_password'),
     purge_nova_config      => false,
+    # cinder
+    cinder_db_password     => hiera('cinder_mysql_password'),
+    cinder_user_password   => hiera('cinder_keystone_password'),
     # Rabbit
     rabbit_password        => hiera('rabbit_password'),
     rabbit_user            => hiera('rabbit_user'),
     # Horizon
+    secret_key             => hiera('horizon_secret_key'),
     cache_server_ip        => '127.0.0.1',
     cache_server_port      => '11211',
+    horizon_app_links      => hiera('horizon_app_links'),
     swift                  => false,
     quantum                => false,
     cinder                 => true,
-    horizon_app_links      => hiera('horizon_app_links'),
     # General
     verbose                => 'True',
-    export_resources       => true,
   }
 
   # Scheduler options
@@ -67,8 +65,8 @@ class admin::cloud::controller {
   }
 
   # Cinder - should be on a compute node
-  class { 'cinder::volume': }
-  class { 'cinder::volume::iscsi': }
+  #class { 'cinder::volume': }
+  #class { 'cinder::volume::iscsi': }
 
 
   # Redirect all traffic to https
@@ -91,6 +89,7 @@ class admin::cloud::controller {
 
 class admin::cloud::compute { 
   class { 'openstack::compute': 
+    quantum               => false,
     private_interface     => hiera('private_interface'),
     glance_api_servers    => hiera('glance_api_servers'),
     sql_connection        => hiera('nova_db'),

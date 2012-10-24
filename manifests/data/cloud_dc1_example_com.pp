@@ -3,6 +3,9 @@ class admin::data::cloud_dc1_example_com {
 
   include admin::data::dc1
 
+  # Nagios
+  $nagios_admin_password = 'password'
+
   # MySQL
   $mysql_root_password      = 'password'
   $mysql_bind_address       = '0.0.0.0'

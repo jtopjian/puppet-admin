@@ -8,6 +8,7 @@ class admin::nagios::contacts {
     service_notification_commands => 'notify-service-by-email',
     host_notification_commands    => 'notify-host-by-email',
     target                        => '/etc/nagios3/conf.d/nagios_contacts.cfg',
+    require                       => File['/etc/nagios3/conf.d/nagios_contacts.cfg'],
   } 
   
   Nagios_contactgroup {
