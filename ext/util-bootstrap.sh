@@ -11,13 +11,12 @@ cd /etc/puppet/modules
 git clone -b jtopjian-mods https://github.com/jtopjian/puppetlabs-puppet puppet
 git clone -b jtopjian-mods https://github.com/jtopjian/puppetlabs-apache apache
 git clone -b 3.x https://github.com/puppetlabs/puppetlabs-stdlib stdlib
-git clone -b folsom https://github.com/jtopjian/puppetlabs-glance glance
-git clone -b folsom https://github.com/jtopjian/puppetlabs-keystone keystone
-git clone -b folsom https://github.com/jtopjian/puppetlabs-nova nova
-git clone -b folsom https://github.com/jtopjian/puppet-cinder cinder
-git clone -b folsom https://github.com/jtopjian/puppetlabs-nova nova
-git clone -b folsom https://github.com/puppetlabs/puppetlabs-horizon horizon
-git clone -b folsom https://github.com/jtopjian/puppetlabs-openstack openstack
+git clone https://github.com/puppetlabs/puppetlabs-glance glance
+git clone https://github.com/puppetlabs/puppetlabs-keystone keystone
+git clone https://github.com/puppetlabs/puppetlabs-nova nova
+git clone https://github.com/puppetlabs/puppetlabs-cinder cinder
+git clone https://github.com/puppetlabs/puppetlabs-horizon horizon
+git clone https://github.com/puppetlabs/puppetlabs-openstack openstack
 git clone https://github.com/jtopjian/jtopjian-fqdn_underscore fqdn_underscore
 git clone https://github.com/puppetlabs/puppetlabs-rabbitmq rabbitmq
 git clone https://github.com/puppetlabs/puppetlabs-mysql mysql

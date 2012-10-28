@@ -7,6 +7,7 @@ class admin::data::dc1 {
   $public_network_mysql  = '10.1.0.%'
   $private_network_mysql = '10.0.0.%'
   $pxe_network           = '192.168.255.0/24'
+  $pxe_network_mysql     = '192.168.255.%'
 
   # Utility Server
   $util_public_hostname  = 'p2.dc1.example.com'
@@ -33,12 +34,16 @@ class admin::data::dc1 {
   # Cloud Stuff
 
   # Cloud Controller
-  $cloud_public_hostname  = 'cloud.dc1.example.com'
-  $cloud_private_hostname = 'cloud.dc1.private.example.com'
-  $cloud_public_ip        = '10.1.0.32'
-  $cloud_private_ip       = '10.0.0.66'
-  $cloud_mysql_host       = $cloud_public_hostname
-  $region                 = 'dc1'
+  $cloud_public_hostname     = 'cloud.dc1.example.com'
+  $cloud_private_hostname    = 'cloud.dc1.private.example.com'
+  $cloud_public_ip           = '10.1.0.32'
+  $cloud_private_ip          = '10.0.0.66'
+  $keystone_public_hostname  = 'keystone.dc1.example.com'
+  $keystone_private_hostname = 'keystone.dc1.private.example.com'
+  $keystone_public_ip        = '10.1.0.32'
+  $keystone_private_ip       = '10.0.0.66'
+  $cloud_mysql_host          = $cloud_public_hostname
+  $region                    = 'dc1'
 
   # Nagios
   $nrpe_allowed_hosts = [$cloud_public_ip, $cloud_private_ip, '127.0.0.1']
@@ -65,6 +70,11 @@ class admin::data::dc1 {
   $cinder_db = "mysql://${cinder_mysql_user}:${cinder_mysql_password}@${cloud_mysql_host}/${cinder_mysql_dbname}"
 
   # Glance
-  $glance_api_servers = "${::admin::data::dc1::cloud_public_hostname}:9292"
+  $glance_api_servers = "${cloud_public_hostname}:9292"
+
+  # Swift
+  $swift_hash_suffix       = 'shared_secret'
+  $swift_keystone_password = 'password'
+  $swift_public_ip         = '1.1.1.1'
 
 }

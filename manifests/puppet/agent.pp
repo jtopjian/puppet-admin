@@ -15,6 +15,7 @@ class admin::puppet::agent (
 
   class { '::puppet':
     puppet_server => $puppet_server,
+    agent_cron    => false,
     version       => $version,
     require       => Apt::Source['puppet'],
   }

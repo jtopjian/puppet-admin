@@ -9,7 +9,7 @@ class admin::data::cloud_dc2_example_com {
   # MySQL
   $mysql_root_password      = 'password'
   $mysql_bind_address       = '0.0.0.0'
-  $mysql_allowed_hosts      = [$::admin::data::dc2::private_mysql_network, $::admin::data::dc2::public_network_mysql, '127.0.0.%']
+  $mysql_allowed_hosts      = [$::admin::data::dc2::private_network_mysql, $::admin::data::dc2::public_network_mysql, $::admin::data::dc2::pxe_network_mysql, '127.0.0.%']
 
   # Keystone
   $keystone_admin_token     = '12345'
