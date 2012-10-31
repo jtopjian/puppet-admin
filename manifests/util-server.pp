@@ -54,14 +54,14 @@ class admin::util-server (
   # Make sure the default docroot is still in place
   apache::vhost { "default-${util_public_hostname}":
     priority   => '1',
-    servername => $public_hostname,
+    servername => $util_public_hostname,
     port       => '80',
     docroot    => '/var/www',
   }
 
   apache::vhost { "default-${util_public_hostname}-ssl":
     priority   => '1',
-    servername => $public_hostname,
+    servername => $util_public_hostname,
     ssl        => true,
     port       => 443,
     docroot    => '/var/www',

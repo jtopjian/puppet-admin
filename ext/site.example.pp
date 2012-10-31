@@ -2,7 +2,7 @@ include admin::functions
 
 # Configure filebucket backup
 filebucket { "main":
-    server => hiera('puppet_server')
+    server => hiera('puppet_server'),
     path => false,
 }
 
