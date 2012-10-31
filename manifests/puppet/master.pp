@@ -9,7 +9,7 @@ class admin::puppet::master (
 
   # Add Puppet apt repo
   apt::source { 'puppet':
-    location    => 'http://panel.terrarum.net/puppet',
+    location    => 'http://apt.terrarum.net/ubuntu',
     release     => $::lsbdistcodename,
     repos       => 'main',
     key         => 'F8793AF4',
