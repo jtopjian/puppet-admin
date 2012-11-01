@@ -126,7 +126,9 @@ class admin::cloud::swift_base {
   class { 'ssh': }
 }
 
-class admin::cloud::swift_proxy inherits admin::cloud::swift_base {
+class admin::cloud::swift_proxy (
+  $location
+) inherits admin::cloud::swift_base {
 
   class { 'memcached':
     listen_ip => '127.0.0.1',
@@ -134,8 +136,9 @@ class admin::cloud::swift_proxy inherits admin::cloud::swift_base {
 
   class { 'swift::proxy':
     account_autocreate => true,
-    proxy_local_net_ip => hiera('public_ip'),
-    pipeline           => ['healthcheck', 'cache', 'swift3', 'authtoken', 'keystone', 'proxy-logging', 'proxy-server'],
+    proxy_local_net_ip => hiera('private_ip'),
+    pipeline           => ['healthcheck', 'cache', 'swift3', 's3token', 'authtoken', 'keystone', 'proxy-logging', 'proxy-server'],
+    log_level          => 'DEBUG',
     require            => Class['swift::ringbuilder'],
   }
     
@@ -158,9 +161,9 @@ class admin::cloud::swift_proxy inherits admin::cloud::swift_base {
 
   # collect all of the resources that are needed
   # to balance the ring
-  Ring_object_device <<||>>
-  Ring_container_device <<||>>
-  Ring_account_device <<||>>
+  Ring_object_device <<| tag == $location |>>
+  Ring_container_device <<| tag == $location |>>
+  Ring_account_device <<| tag == $location |>>
 
   # create the ring
   class { 'swift::ringbuilder':
@@ -179,16 +182,25 @@ class admin::cloud::swift_proxy inherits admin::cloud::swift_base {
   # exports rsync gets that can be used to sync the ring files
   @@swift::ringsync { ['account', 'object', 'container']:
    ring_server => hiera('private_ip'),
+   tag         => $location,
  }
 
   # deploy a script that can be used for testing
   file { '/tmp/swift_keystone_test.rb':
     source => 'puppet:///modules/swift/swift_keystone_test.rb'
   }
+
+  # ssl reverse proxy
+  class { 'admin::openstack::swift::nginx':
+    location => $location,
+    listen   => hiera('public_ip'),
+    upstream => hiera('private_ip'),
+  }
     
 }
 
 class admin::cloud::swift_node (
+  $location,
   $swift_zone
 ) inherits admin::cloud::swift_base {
   swift::storage::xfs { ['sda6', 'sdb6', 'sdc', 'sdd', 'sde', 'sdf']: }
@@ -209,6 +221,7 @@ class admin::cloud::swift_node (
      "${ip}:6000/sdf"]:
        zone   => $swift_zone,
        weight => 1,
+       tag    => $location,
   }
 
   @@ring_container_device { 
@@ -220,6 +233,7 @@ class admin::cloud::swift_node (
      "${ip}:6001/sdf"]:
        zone   => $swift_zone,
        weight => 1,
+       tag    => $location,
   }
 
   @@ring_account_device {
@@ -231,9 +245,10 @@ class admin::cloud::swift_node (
      "${ip}:6002/sdf"]:
        zone   => $swift_zone,
        weight => 1,
+       tag    => $location,
   }
 
   # collect resources for synchronizing the ring databases
-  Swift::Ringsync<<||>>
+  Swift::Ringsync<<| tag == $location |>>
 }
 

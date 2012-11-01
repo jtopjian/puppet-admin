@@ -1,0 +1,26 @@
+upstream swift {
+        server <%= upstream %>:8080;
+}
+
+server {
+        listen <%= listen %>:8080; 
+        root /usr/share/nginx/www;
+        index index.html index.htm;
+
+        server_name 208.75.75.9;
+
+        ssl                  on;
+        ssl_certificate      /etc/nginx/server.crt;
+        ssl_certificate_key  /etc/nginx/server.key;
+
+        location / {
+                proxy_pass http://swift;
+		proxy_pass_request_headers on;
+		proxy_no_cache $cookie_nocache  $arg_nocache$arg_comment;
+		proxy_no_cache $http_pragma     $http_authorization;
+		proxy_cache_bypass $cookie_nocache $arg_nocache $arg_comment;
+		proxy_cache_bypass $http_pragma $http_authorization;
+		proxy_set_header HTTP_AUTHORIZATION $http_authorization;
+        }
+
+}
