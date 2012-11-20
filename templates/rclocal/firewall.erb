@@ -1,0 +1,51 @@
+## Firewall configuration
+# External interface: <%= external_interface %>
+# Internal interface: <%= internal_interface %>
+# Internal network:   <%= internal_network %>
+# Trusted networks:   <%= trusted_networks.join(', ') %>
+
+# Enable forwarding
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# Basic NAT
+iptables -A FORWARD -s 10.0.0.0/8 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -i <%= internal_interface -%> -o <%= external_interface -%> -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A POSTROUTING -s 10.0.0.0/8 -t nat -j MASQUERADE
+iptables -A POSTROUTING -s <%= internal_network -%> -t nat -j MASQUERADE
+
+# Access to oncommand
+iptables -t nat -A PREROUTING -p tcp -i vlan10 --dport 8080 -j DNAT --to-destination <%= oncommand -%>:8080
+iptables -A FORWARD -p tcp -d <%= oncommand -%> --dport 8080 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# Custom chain for services
+iptables -N services
+iptables -A INPUT -p tcp --dport 8773 -j services
+iptables -A INPUT -p tcp --dport 8774 -j services
+iptables -A INPUT -p tcp --dport 8776 -j services
+iptables -A INPUT -p tcp --dport 5000 -j services
+iptables -A INPUT -p tcp --dport 9191 -j services
+iptables -A INPUT -p tcp --dport 9292 -j services
+
+# Custom chain for other services
+iptables -N other_services
+iptables -A INPUT -p tcp --dport 22    -j other_services
+iptables -A INPUT -p udp --dport 514   -j other_services
+iptables -A INPUT -p tcp --dport 3306  -j other_services
+iptables -A INPUT -p tcp --dport 5672  -j other_services
+iptables -A INPUT -p tcp --dport 6163  -j other_services
+iptables -A INPUT -p tcp --dport 8080  -j other_services
+iptables -A INPUT -p tcp --dport 35357 -j other_services
+
+# Rules
+iptables -A services -s <%= trusted_networks.join(',') -%> -j ACCEPT
+iptables -A services -d <%= trusted_networks.join(',') -%> -j ACCEPT
+iptables -A services -s 10.0.0.0/8 -j ACCEPT
+iptables -A services -s 10.0.0.0/8 -j ACCEPT
+iptables -A services -s 169.254.169.254 -j ACCEPT
+iptables -A services -d 169.254.168.254 -j ACCEPT
+iptables -A services -j DROP
+iptables -A other_services -s <%= trusted_networks.join(',') -%> -j ACCEPT
+iptables -A other_services -d <%= trusted_networks.join(',') -%> -j ACCEPT
+iptables -A other_services -j DROP
+

@@ -1,10 +1,12 @@
 class admin::nagios::check_openstack_nodes_nrpe (
-  $contact_groups
+  $contact_groups,
+  $location
 ) inherits admin::nagios::global_nrpe {
   @@nagios_service { 'check_openstack_nodes':
     service_description => "OpenStack Nodes",
     check_command       => 'check_nrpe_1arg!check_openstack_nodes',
     contact_groups      => $contact_groups,
+    tag                 => $location,
   }
 
   concat::fragment { 'check_openstack_nodes':

@@ -14,8 +14,8 @@ class admin::data::dc2 {
   $util_private_hostname = 'util.dc2.private.example.com'
   $util_pxe_hostname     = 'util.dc2.pxe.example.com'
   $util_public_ip        = '192.168.0.2'
-  $util_private_ip       = '192.168.2.1'   
-  $util_pxe_ip           = '192.168.254.1' 
+  $util_private_ip       = '192.168.2.1'
+  $util_pxe_ip           = '192.168.254.1'
 
   # Postfix
   $postfix_relay_host = $util_private_hostname
@@ -47,8 +47,10 @@ class admin::data::dc2 {
 
   # Nagios
   $nrpe_allowed_hosts = [$cloud_public_ip, $cloud_private_ip, '127.0.0.1']
-  
+
   # Rabbit
+  $rabbit_user              = 'nova'
+  $rabbit_host              = $cloud_public_ip
   $rabbit_password          = 'password'
 
   # Nova
@@ -60,6 +62,7 @@ class admin::data::dc2 {
   $libvirt_type             = 'qemu'
   $private_interface        = 'eth0'
   $public_interface         = 'eth1'
+  $internal_interface       = 'vlan11'
   $nova_db = "mysql://${nova_mysql_user}:${nova_mysql_password}@${cloud_mysql_host}/${nova_mysql_dbname}"
 
   # Cinder
@@ -71,10 +74,16 @@ class admin::data::dc2 {
 
   # Glance
   $glance_api_servers = "${cloud_private_hostname}:9292"
+  $glance_host        = $cloud_public-ip
 
   # Swift
   $swift_hash_suffix       = 'shared_secret'
   $swift_keystone_password = 'password'
   $swift_public_ip         = '1.1.1.1'
+
+  # mcollective
+  $mcollective_server   = $cloud_public_ip
+  $mcollective_password = 'password'
+  $mcollective_psk      = 'password'
 
 }

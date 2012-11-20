@@ -1,5 +1,6 @@
 class admin::nagios::server (
   $admin_password,
+  $location
 ) {
 
   # Nagios Package
@@ -75,7 +76,7 @@ class admin::nagios::server (
   class { 'admin::nagios::contacts': }
 
   # Collect all exported Nagios configs
-  Nagios_host    <<||>> 
-  Nagios_service <<||>> 
+  Nagios_host    <<| tag == $location |>> 
+  Nagios_service <<| tag == $location |>> 
 
 }

@@ -1,8 +1,9 @@
+#
 class admin::rsyslog::server (
   $interface = '0.0.0.0'
 ) {
-    
-    class { 'admin::rsyslog': }
+
+    class { 'admin::rsyslog::base': }
 
     file { "/etc/rsyslog.d/server.conf":
         ensure  => present,

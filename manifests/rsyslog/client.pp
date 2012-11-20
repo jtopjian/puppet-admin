@@ -1,8 +1,9 @@
-class admin::rsyslog::client ( 
+#
+class admin::rsyslog::client (
   $rsyslog_server
 ) {
 
-    class { 'admin::rsyslog': }
+    class { 'admin::rsyslog::base': }
 
     file { "/etc/rsyslog.d/client-common.conf":
         ensure  => present,
@@ -12,5 +13,5 @@ class admin::rsyslog::client (
         content => template('admin/rsyslog/client-common.conf.erb'),
         require => Package['rsyslog'],
         notify  => Service['rsyslog'],
-    }  
+    }
 }

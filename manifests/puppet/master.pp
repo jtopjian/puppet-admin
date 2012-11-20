@@ -37,7 +37,6 @@ class admin::puppet::master (
     class { 'puppet':
       master                  => true,
       agent                   => true,
-      agent_cron              => false,
       autosign                => true,
       puppet_passenger        => true,
       storeconfigs            => true,

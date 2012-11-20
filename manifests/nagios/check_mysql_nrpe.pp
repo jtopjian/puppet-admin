@@ -1,10 +1,12 @@
 class admin::nagios::check_mysql_nrpe ( 
-  $contact_groups
+  $contact_groups,
+  $location
 ) inherits admin::nagios::global_nrpe {
   @@nagios_service { "check_mysql_${hostname}":
     service_description => 'MySQL',
     check_command       => 'check_nrpe_1arg!check_mysql',
     contact_groups      => $contact_groups,
+    tag                 => $location,
   }
 
   concat::fragment { 'check_mysql':

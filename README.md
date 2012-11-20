@@ -7,9 +7,11 @@ Bootstrapping Your Admin/Util/PMaster Server
 This will set up:
 
   * MySQL
-  * Puppet / Puppet Master
+  * Puppet
+  * Puppet Master
   * Puppet Dashboard
   * PuppetDB
+  * Hiera
 
 ```shell
 # Ensure hostname is correct
@@ -49,10 +51,27 @@ puppet apply --verbose puppet-master-db.pp
 # Again, run 2 or 3 times if you get errors. You will definitely see an error with PuppetDB as it takes longer than 20 seconds to initialize and Puppet only waits 20 seconds for it to start. Just re-run.
 ```
 
+Location is Important!
+----------------------
+
+This configuration can be applied to one or more data centers. Regardless of how many locations you have, you will need to set up facter-dot-d with a location fact:
+
+```shell
+# Set a location
+echo location=antarctica > /etc/facter/facts.d/location.txt
+
+# Confirm location fact
+facter -p location
+```
+
+You will see `$::location` referenced throughout these manifests.
+
+The `manifests/data` directory contains `dc1.pp` and `dc2.pp`. Rename these to your locations (like `antarctica.pp`).
+
 Post-Bootstrap Configuration
 ----------------------------
 
-Once the server has been bootstrapped, you can now apply roles that require Puppet storedconfigs.
+Once the server has been bootstrapped, you can now apply roles that require PuppetDB.
 
 The stack will now include:
 
@@ -68,24 +87,31 @@ The stack will now include:
 chown -R puppet: /var/lib/puppet/reports/
 gem uninstall rack
 # Remove 1.4.1
+```
 
-# Configure Hiera
-cd /etc/puppet/modules/admin/manifests/data
+### Configure Hiera
 
-# `common.pp` contains global values for EVERYTHING
-# For $ssh_util_admin_key:
-# The key is what you will find in the `id_rsa.pub` file. Strip off the ssh-rsa at the beginning and the name at the end -- meaning, only add the actual key itself, not the entire key entry.
+The hiera information is in `/etc/puppet/modules/admin/manifests/data`.
 
-# `dc1.pp` and `dc2.pp` contain global variables for all nodes in that location. Edit it with the proper environment values.
+`common.pp` contains global values for EVERYTHING
 
-# The `.pp` files that have the names of hostnames are values for that particular hostname. Edit as needed. Make sure to use _ instead of . in the hostnames!
+For `$ssh_util_admin_key`, the key is what you will find in the `id_rsa.pub` file. Strip off the ssh-rsa at the beginning and the name at the end -- meaning, only add the actual key itself, not the entire key entry.
 
+`dc1.pp` and `dc2.pp` contain global variables for all nodes in that location. Edit it with the proper environment values.
+
+The `.pp` files that have the names of hostnames are values for that particular host. Edit as needed. Make sure to use _ instead of . in the hostnames! You can use my [fqdn_underscore](https://github.com/jtopjian/jtopjian-fqdn_underscore) module for this (installed by default with the initial `util-bootstrap.sh` script).
+
+### Example manifests
+
+The `ext` directory contains example site and node manifests to get you started:
+
+```shell
 cd /etc/puppet/manifests
 cp /etc/puppet/modules/admin/ext/site.example.pp site.pp
 cp /etc/puppet/modules/admin/ext/nodes.example.pp nodes.pp
-# Edit nodes.pp to suit your environment
-# By default, it gives examples of an OpenStack cloud
 ```
+
+Edit `nodes.pp` to suit your environment. By default, it gives examples of an OpenStack cloud
 
 Bootstrapping Only a Puppet Master Server
 -----------------------------------------
@@ -98,6 +124,6 @@ Files that Contain Site-Specific Data
 Make sure you edit the following files to suit your environment:
 
   * cd /etc/puppet/modules/admin/manifests
-  * params.pp
+  * data
   * nagios/contacts.pp
   * mail/aliases.pp

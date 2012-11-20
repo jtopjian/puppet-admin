@@ -20,6 +20,7 @@ class admin::data::cloud_dc2_example_com {
   $keystone_mysql_user      = 'keystone_admin'
   $keystone_mysql_password  = 'password'
   $keystone_host            = $::admin::data::dc2::cloud_private_hostname
+  $keystone_db              = "mysql://${keystone_mysql_user}:${keystone_mysql_password}@${::admin::data::dc2::cloud_mysql_host}/${keystone_mysql_dbname}"
 
   # Glance
   $glance_keystone_password = 'password'
@@ -32,10 +33,6 @@ class admin::data::cloud_dc2_example_com {
   # Horizon
   $horizon_secret_key       = 'dummy_secret_key'
   $horizon_app_links        = "[['Nagios','http://${::admin::params::data::util_public_hostname}/nagios3'],]"
-
-  # RabbitMQ
-  $rabbit_user              = 'nova'
-  $rabbit_host              = $::admin::data::dc2::cloud_private_hostname
 
   # Nova
   $vlan_start               = '100'

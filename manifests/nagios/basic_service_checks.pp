@@ -1,11 +1,13 @@
 class admin::nagios::basic_service_checks (
-  $contact_groups
+  $contact_groups,
+  $location
 ) inherits admin::nagios::global_nrpe {
 
   @@nagios_service { "check_ping_${hostname}":
      service_description => 'Ping',
      check_command       => 'check_ping!100.0,20%!500.0,60%',
      contact_groups      => $contact_groups,
+     tag                 => $location,
   }
 
   # For NRPE commands - do NOT forget to add it to the nrpe.erb file
@@ -14,24 +16,28 @@ class admin::nagios::basic_service_checks (
      service_description => 'Load',
      check_command       => 'check_nrpe!check_load!4.0 4.0 4.0 8.0 6.0 4.0',
      contact_groups      => $contact_groups,
+     tag                 => $location,
   }
 
   @@nagios_service { "check_zombie_procs_${hostname}":
      service_description => 'Zombie Procs',
      check_command       => 'check_nrpe!check_zombie_procs!5 10',
      contact_groups      => $contact_groups,
+     tag                 => $location,
   }
 
   @@nagios_service { "check_total_procs_${hostname}":
      service_description => 'Total Procs',
-     check_command       => 'check_nrpe!check_total_procs!200 300',
+     check_command       => 'check_nrpe!check_total_procs!350 400',
      contact_groups      => $contact_groups,
+     tag                 => $location,
   }
 
   @@nagios_service { "check_all_disks_${hostname}":
      service_description => 'Disk',
      check_command       => 'check_nrpe!check_all_disks!20% 10%',
      contact_groups      => $contact_groups,
+     tag                 => $location,
   }
 
   $nrpe = '/etc/nagios/nrpe.cfg'

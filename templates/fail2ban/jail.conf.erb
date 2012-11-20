@@ -19,7 +19,7 @@
 
 # "ignoreip" can be an IP address, a CIDR mask or a DNS host
 ignoreip = <%= ignore_networks %>
-bantime  = 86400
+bantime  = -1
 maxretry = 3
 findtime = 43200
 
@@ -39,8 +39,8 @@ destemail = root@localhost
 #
 
 # Default banning action (e.g. iptables, iptables-new,
-# iptables-multiport, shorewall, etc) It is used to define 
-# action_* variables. Can be overriden globally or per 
+# iptables-multiport, shorewall, etc) It is used to define
+# action_* variables. Can be overriden globally or per
 # section within jail.local file
 banaction = iptables-multiport
 
@@ -65,11 +65,11 @@ action_mw = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protoc
 # to the destemail.
 action_mwl = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s]
                %(mta)s-whois-lines[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s]
- 
+
 # Choose default action.  To change, just override value of 'action' with the
 # interpolation to the chosen action shortcut (e.g.  action_mw, action_mwl, etc) in jail.local
-# globally (section [DEFAULT]) or per specific section 
-action = %(action_mwl)s
+# globally (section [DEFAULT]) or per specific section
+action = %(action_)s
 
 #
 # JAILS
@@ -78,7 +78,7 @@ action = %(action_mwl)s
 # Next jails corresponds to the standard configuration in Fail2ban 0.6 which
 # was shipped in Debian. Enable any defined here jail by including
 #
-# [SECTION_NAME] 
+# [SECTION_NAME]
 # enabled = true
 #
 # in /etc/fail2ban/jail.local.
@@ -98,7 +98,7 @@ maxretry = 3
 # such as iptables-allports, shorewall
 [pam-generic]
 
-enabled = true 
+enabled = true
 # pam-generic filter can be customized to monitor specific subset of 'tty's
 filter  = pam-generic
 # port actually must be irrelevant but lets leave it all for some possible uses
@@ -120,7 +120,7 @@ maxretry  = 2
 
 [ssh-ddos]
 
-enabled = true 
+enabled = true
 port    = ssh
 filter  = sshd-ddos
 logpath  = /var/log/auth.log

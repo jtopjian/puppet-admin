@@ -7,6 +7,10 @@
 #  - Puppet master, dashboard, puppetdb
 
 class admin::data::util_dc1_example_com {
+
+  # IPs
+  $public_ip  = $::ipaddress_eth0
+
   # MySQL
   $mysql_root_password = 'password'
 

@@ -10,6 +10,7 @@ read-ethers
 addn-hosts = /var/lib/cobbler/cobbler_hosts
 #domain=
 
+except-interface=eth0
 server=<%= dns_upstream_server %>
 no-dhcp-interface=eth1
 dhcp-range=<%= dhcp_start_range %>,<%= dhcp_stop_range %>
