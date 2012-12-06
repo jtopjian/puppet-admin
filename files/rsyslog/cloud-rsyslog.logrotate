@@ -1,6 +1,7 @@
-/var/log/rsyslog/*/syslog
+/var/log/rsyslog/*.log
+/var/log/rsyslog/*/*.log
 {
-	rotate 7
+	rotate 90
 	daily
 	missingok
 	notifempty
