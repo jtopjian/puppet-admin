@@ -28,7 +28,7 @@ class admin::data::cloud_dc1_example_com {
   $glance_mysql_user        = 'glance'
   $glance_mysql_password    = 'password'
   $glance_host              = $::admin::data::dc1::cloud_private_hostname
-  $glance_db = "mysql://${glance_mysql_user}:${glance_mysql_password}@${mysql_host}/${glance_mysql_dbname}"
+  $glance_db = "mysql://${glance_mysql_user}:${glance_mysql_password}@${::admin::data::dc1::cloud_mysql_host}/${glance_mysql_dbname}"
 
   # Horizon
   $horizon_secret_key       = 'dummy_secret_key'

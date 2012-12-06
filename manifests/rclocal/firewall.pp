@@ -5,7 +5,6 @@ class admin::rclocal::firewall inherits admin::rclocal::base {
   $internal_interface = hiera('internal_interface')
   $internal_network   = hiera('private_network')
   $trusted_networks   = hiera('trusted_networks')
-  $oncommand          = hiera('oncommand')
 
   concat::fragment { 'rclocal firewall':
     target  => $::admin::rclocal::base::rclocal_file,

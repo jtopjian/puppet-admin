@@ -1,10 +1,10 @@
 #
-class admin::openstack::controller::nova-qc {
+class admin::openstack::controller::dc2 {
 
   # Base configuration
   class { 'admin::openstack::controller::base': }
 
-  # apache config specific to nova-qc
+  # apache config specific to dc2
   # Redirect all traffic to https
   $cloud_public_hostname = hiera('cloud_public_hostname')
   apache::vhost::redirect { $cloud_public_hostname:

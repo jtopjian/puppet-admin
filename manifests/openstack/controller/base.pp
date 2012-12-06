@@ -107,24 +107,6 @@ class admin::openstack::controller::base {
   # cinder scheduler
   class { 'cinder::scheduler': }
 
-  # NetApp Configuration
-  class { 'cinder::volume': }
-  class { 'cinder::volume::netapp':
-    netapp_wsdl_url        => hiera('netapp_wsdl_url'),
-    netapp_login           => hiera('netapp_login'),
-    netapp_password        => hiera('netapp_password'),
-    netapp_server_hostname => hiera('netapp_server_hostname'),
-    netapp_storage_service => hiera('netapp_storage_service'),
-  }
-
-  ## Horizon
-  class { 'openstack::horizon':
-    secret_key        => hiera('horizon_secret_key'),
-    horizon_app_links => hiera('horizon_app_links'),
-    swift             => true,
-    quantum           => false,
-  }
-
   ## syslog
   # nova
   nova_config {
@@ -192,18 +174,6 @@ class admin::openstack::controller::base {
   class { 'admin::nagios::check_http':
     contact_groups => 'sysadmins',
     location       => $::location,
-  }
-
-  # oncommand
-  $oncommand_ip    = hiera('oncommand')
-  $oncommand_name = "oncommand-${::location}"
-  nagios_host { $oncommand_name:
-    address        => $oncommand_ip,
-    use            => 'generic-host',
-    contact_groups => 'sysadmins',
-    tag            => $::location,
-    target         => '/etc/nagios3/conf.d/nagios_hosts.cfg',
-    require        => File['/etc/nagios3/conf.d/nagios_hosts.cfg'],
   }
 
 }

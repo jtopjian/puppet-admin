@@ -14,10 +14,6 @@ iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A POSTROUTING -s 10.0.0.0/8 -t nat -j MASQUERADE
 iptables -A POSTROUTING -s <%= internal_network -%> -t nat -j MASQUERADE
 
-# Access to oncommand
-iptables -t nat -A PREROUTING -p tcp -i vlan10 --dport 8080 -j DNAT --to-destination <%= oncommand -%>:8080
-iptables -A FORWARD -p tcp -d <%= oncommand -%> --dport 8080 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-
 # Custom chain for services
 iptables -N services
 iptables -A INPUT -p tcp --dport 8773 -j services

@@ -31,6 +31,9 @@ class admin::data::dc1 {
   $ssh_util_admin_key  = ''
   $ssh_cloud_admin_key = ''
 
+  # Mail aliases
+  $mail_root_alias = ['root@localhost']
+
   # Cloud Stuff
 
   # Cloud Controller
