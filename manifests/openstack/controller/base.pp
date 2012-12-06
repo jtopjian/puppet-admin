@@ -120,6 +120,11 @@ class admin::openstack::controller::base {
     'DEFAULT/syslog_log_facility': value => 'LOG_LOCAL1';
   }
 
+  glance_registry_config {
+    'DEFAULT/use_syslog':          value => 'True';
+    'DEFAULT/syslog_log_facility': value => 'LOG_LOCAL1';
+  }
+
   # keystone
   keystone_config {
     'DEFAULT/use_syslog':          value => 'True';
