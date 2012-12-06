@@ -5,3 +5,40 @@ $UDPServerAddress <%= interface %>
 # Port 514
 $UDPServerRun 514
 
+# Turn off "message repeated x times"
+$RepeatedMsgReduction off
+
+$template SwiftFile,"/var/log/rsyslog/%HOSTNAME%/swift.log"
+$template SwiftAll,"/var/log/rsyslog/swift.log"
+$template NovaFile,"/var/log/rsyslog/%HOSTNAME%/nova.log"
+$template NovaAll,"/var/log/rsyslog/nova.log"
+$template KeystoneFile,"/var/log/rsyslog/%HOSTNAME%/keystone.log"
+$template GlanceFile,"/var/log/rsyslog/%HOSTNAME%/glance.log"
+$template CinderFile,"/var/log/rsyslog/%HOSTNAME%/cinder.log"
+$template CinderAll,"/var/log/rsyslog/cinder.log"
+
+# Swift is handled differently
+# Log everything to a host swift.log file and aggregated swift.log file
+if $hostname contains 'swift' and ($syslogfacility-text == 'local0' or $syslogfacility-text == 'local1' or $syslogfacility-text == 'local2' or $syslogfacility-text == 'local3' or $syslogfacility-text == 'local4' or $syslogfacility-text == 'local5') then ?SwiftFile
+if $hostname contains 'swift' and ($syslogfacility-text == 'local0' or $syslogfacility-text == 'local1' or $syslogfacility-text == 'local2' or $syslogfacility-text == 'local3' or $syslogfacility-text == 'local4' or $syslogfacility-text == 'local5') then ?SwiftAll
+& ~
+
+if $hostname contains '-s' and ($syslogfacility-text == 'local0' or $syslogfacility-text == 'local1' or $syslogfacility-text == 'local2' or $syslogfacility-text == 'local3' or $syslogfacility-text == 'local4' or $syslogfacility-text == 'local5') then ?SwiftFile
+if $hostname contains '-s' and ($syslogfacility-text == 'local0' or $syslogfacility-text == 'local1' or $syslogfacility-text == 'local2' or $syslogfacility-text == 'local3' or $syslogfacility-text == 'local4' or $syslogfacility-text == 'local5') then ?SwiftAll
+& ~
+
+# Log various openstack components to their own individual file
+local0.* ?NovaFile
+local0.* ?NovaAll
+& ~
+local1.* ?GlanceFile
+& ~
+local2.* ?KeystoneFile
+& ~
+local3.* ?CinderFile
+local3.* ?CinderAll
+& ~
+
+# Log everything else to syslog.log
+$template DynFile,"/var/log/rsyslog/%HOSTNAME%/syslog.log"
+*.*     ?DynFile
