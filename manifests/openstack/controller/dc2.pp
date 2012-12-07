@@ -4,6 +4,9 @@ class admin::openstack::controller::dc2 {
   # Base configuration
   class { 'admin::openstack::controller::base': }
 
+  # build a mysqlrc file for all mysql servers
+  class { 'admin::mysql::mysqlrc': }
+
   # apache config specific to dc2
   # Redirect all traffic to https
   $cloud_public_hostname = hiera('cloud_public_hostname')

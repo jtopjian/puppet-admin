@@ -3,13 +3,12 @@ class admin::openstack::compute::node {
 
   ## Nova
   # basic nova
-  $glance_host = hiera('glance_host')
   class { 'nova':
     sql_connection     => hiera('nova_db'),
     rabbit_userid      => hiera('rabbit_user'),
     rabbit_password    => hiera('rabbit_password'),
     image_service      => 'nova.image.glance.GlanceImageService',
-    glance_api_servers => "${glance_host}:9292",
+    glance_api_servers => hiera('glance_api_servers'),
     verbose            => 'True',
     rabbit_host        => hiera('cloud_public_ip'),
   }

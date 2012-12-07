@@ -46,7 +46,7 @@ node basic_server inherits base {
 
   admin::functions::add_host { $::fqdn:
     ip       => hiera('private_ip'),
-    alias    => [$::hostname],
+    aliases  => [$::hostname],
     location => $::location, 
   }
 }

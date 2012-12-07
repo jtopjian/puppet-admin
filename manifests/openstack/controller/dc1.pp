@@ -4,6 +4,11 @@ class admin::openstack::controller::dc1 {
   # Base configuration
   class { 'admin::openstack::controller::base': }
 
+  # build a mysqlrc file for all mysql servers
+  class { 'admin::mysql::mysqlrc': 
+    comment => 'master',
+  }
+
   ## Other Keystone endpoints
   # Add other keystone endpoints for Quebec region
   $ip = hiera('cloud_public_ip')

@@ -35,12 +35,11 @@ class admin::openstack::controller::base {
   }
 
   # Configure Nova
-  $glance_host = hiera('glance_host')
   class { 'nova':
     sql_connection     => hiera('nova_db'),
     rabbit_userid      => hiera('rabbit_user'),
     rabbit_password    => hiera('rabbit_password'),
-    glance_api_servers => "${glance_host}:9292",
+    glance_api_servers => hiera('glance_api_servers'),
     verbose            => 'True',
     rabbit_host        => hiera('cloud_public_ip'),
   }
@@ -59,7 +58,7 @@ class admin::openstack::controller::base {
     public_interface  => hiera('public_interface'),
     fixed_range       => hiera('fixed_range'),
     network_manager   => 'nova.network.manager.VlanManager',
-    num_networks      => 850,
+    num_networks      => hiera('num_networks'),
     enabled           => true,
     config_overrides  => {
       'vlan_start' => hiera('vlan_start'),
