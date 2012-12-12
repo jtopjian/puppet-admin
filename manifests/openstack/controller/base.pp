@@ -136,6 +136,21 @@ class admin::openstack::controller::base {
     'DEFAULT/syslog_log_facility': value => 'LOG_LOCAL3';
   }
 
+  ## notifications
+  nova_config {
+    'notification_driver': value => 'nova.openstack.common.notifier.rabbit_notifier';
+    'notification_topics': value => 'monitor';
+  }
+
+  cinder_config {
+    'DEFAULT/notification_driver': value => 'cinder.openstack.common.notifier.rabbit_notifier';
+    'DEFAULT/notification_topics': value => 'monitor';
+    'DEFAULT/control_exchange':    value => 'nova';
+  }
+
+  ## rabbitmqrc
+  class { 'admin::rabbitmq::rabbitmqrc': }
+
   ## Generate an openrc file
   class { 'openstack::auth_file':
     controller_node      => hiera('keystone_public_ip'),
@@ -144,6 +159,9 @@ class admin::openstack::controller::base {
     admin_tenant         => hiera('keystone_admin_tenant'),
     region               => $::location,
   }
+
+  ## Install novac command suite
+  class { 'admin::openstack::novac': }
 
   ## Nagios checks
   class { 'admin::nagios::check_mysql_nrpe':

@@ -9,6 +9,11 @@ class admin::openstack::controller::dc1 {
     comment => 'master',
   }
 
+  # Configure dc1 to control quotas for all clouds
+  class { 'admin::openstack::quotas': 
+    require => Class['admin::openstack::novac'],
+  }
+
   ## Other Keystone endpoints
   # Add other keystone endpoints for Quebec region
   $ip = hiera('cloud_public_ip')

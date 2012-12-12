@@ -1,0 +1,25 @@
+#!/bin/bash
+
+WORKDIR=/root/novac
+PATH=$PATH:/root/novac/bin
+PIDFILE=/var/run/nova-quotas.pid
+DAEMON=/root/novac/bin/novac
+ARGS=quota-daemon
+
+case "$1" in
+  start)
+    echo "Starting server"
+    cd $WORKDIR
+    /sbin/start-stop-daemon --start --pidfile $PIDFILE --make-pidfile -b --exec $DAEMON $ARGS
+    ;;
+  stop)
+    echo "Stopping server"
+    /sbin/start-stop-daemon --stop --pidfile $PIDFILE --verbose
+    ;;
+  *)
+    echo "Usage: nova-quotas {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0

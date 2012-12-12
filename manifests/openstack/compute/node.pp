@@ -48,6 +48,7 @@ class admin::openstack::compute::node {
     'DEFAULT/syslog_log_facility': value => 'LOG_LOCAL3';
   }
 
+  ## Cinder
   class { 'cinder::base':
     verbose         => 'True',
     sql_connection  => hiera('cinder_db'),
@@ -64,6 +65,18 @@ class admin::openstack::compute::node {
   class { 'cinder::volume::iscsi': 
     volume_group     => 'nova-volumes',
     iscsi_ip_address => $::ipaddress_vlan30,
+  }
+
+  ## notifications
+  nova_config {
+    'notification_driver': value => 'nova.openstack.common.notifier.rabbit_notifier';
+    'notification_topics': value => 'monitor';
+  }
+
+  cinder_config {
+    'DEFAULT/notification_driver': value => 'cinder.openstack.common.notifier.rabbit_notifier';
+    'DEFAULT/notification_topics': value => 'monitor';
+    'DEFAULT/control_exchange':    value => 'nova';
   }
 
   # Nagios checks
