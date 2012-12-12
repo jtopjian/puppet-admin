@@ -13,6 +13,7 @@ class admin::openstack::quotas {
     hasstatus  => false,
     hasrestart => false,
     status     => 'ps aux | grep quota-daemon | grep -v grep',
+    require    => File['/etc/init.d/nova-quotas'],
   }
 
   cron { 'nova-quotas balance':
@@ -20,6 +21,7 @@ class admin::openstack::quotas {
     environment => 'PATH=/bin:/usr/bin:/sbin:/usr/sbin:/root/novac/bin',
     user        => 'root',
     minute      => '0',
+    require     => Vcsrepo['/root/novac'],
   }
 
   cron { 'nova-quotas sync limits':
@@ -27,5 +29,6 @@ class admin::openstack::quotas {
     environment => 'PATH=/bin:/usr/bin:/sbin:/usr/sbin:/root/novac/bin',
     user        => 'root',
     minute      => '*/15',
+    require     => Vcsrepo['/root/novac'],
   }
 }
