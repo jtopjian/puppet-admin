@@ -1,6 +1,8 @@
 #
 class admin::data::dc1 {
 
+  include admin::data::common
+
   # Subnets
   $public_network        = '10.1.0.0/24'
   $private_network       = '10.0.0.0/24'
@@ -24,8 +26,9 @@ class admin::data::dc1 {
   # rsyslog
   $rsyslog_server = '10.1.0.28'
 
-  # fail2ban
-  $fail2ban_ignore_networks = "${private_network}, 127.0.0.1"
+  # fail2ban 
+  $tnetworks = join($::admin::data::common::trusted_networks, ' ') 
+  $fail2ban_ignore_networks = "${private_network} 127.0.0.1 ${tnetworks} ${public_network}"
 
   # SSH
   $ssh_util_admin_key  = ''
