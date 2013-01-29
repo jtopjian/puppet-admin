@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mysql -e 'USE keystone ; DELETE FROM token WHERE NOT DATE_SUB(CURDATE(),INTERVAL 2 DAY) <= expires;'

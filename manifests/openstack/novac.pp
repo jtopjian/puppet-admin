@@ -5,4 +5,12 @@ class admin::openstack::novac {
     source   => 'http://github.com/cybera/novac',
     revision => 'dev',
   }
+
+  file { '/etc/sudoers.d/novac':
+    ensure => present,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0440',
+    source => 'puppet:///modules/admin/openstack/novac-sudo'
+  }
 }

@@ -198,4 +198,16 @@ class admin::openstack::controller::base {
     location       => $::location,
   }
 
+  # Extra packages
+  class { 'admin::openstack::controller::packages': }
+
+  # Keystone token cleanup
+  file { '/etc/cron.daily/token-cleanup':
+    ensure => present,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+    source => 'puppet:///modules/admin/openstack/token-cleanup',
+  }
+
 }
