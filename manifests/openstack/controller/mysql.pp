@@ -47,4 +47,16 @@ class admin::openstack::controller::mysql {
     dbname        => hiera('cinder_mysql_dbname'),
     allowed_hosts => hiera('mysql_allowed_hosts'),
   }
+
+  # Create a helper user so scripts don't have to use root
+  $mysql_allowed_hosts   = hiera('mysql_allowed_hosts')
+  $mysql_helper_user     = hiera('mysql_helper_user')
+  $mysql_helper_password = hiera('mysql_helper_password')
+
+  admin::functions::mysql_host_access { $mysql_allowed_hosts:
+    user       => $mysql_helper_user,
+    password   => $mysql_helper_password,
+    privileges => ['select_priv', 'update_priv', 'insert_priv'],
+  }
+
 }
