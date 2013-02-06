@@ -32,10 +32,12 @@ alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 myorigin = /etc/mailname
 mydestination = <%= @fqdn %>, localhost.<%= @domain %>, localhost
-<% if relayhost != :undef %>
+<% if relayhost %>
 relayhost = <%= relayhost %>
+inet_interfaces = loopback-only
+<% else -%>
+inet_interfaces = <%= private_ip -%>, <%= pxe_ip -%>
 <% end %>
 mynetworks = <%= my_networks.map().join(' ') %>
 mailbox_size_limit = 0
 recipient_delimiter = +
-inet_interfaces = all

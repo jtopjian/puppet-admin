@@ -35,21 +35,22 @@ class admin::puppet::master (
   if $puppetdb {
     Apt::Source['puppet'] -> Class['puppetdb::server']
     class { 'puppet':
-      master                  => true,
-      agent                   => true,
-      autosign                => true,
-      puppet_passenger        => true,
-      storeconfigs            => true,
-      storeconfigs_dbadapter  => 'puppetdb',
-      dashboard               => true,
-      dashboard_user          => $puppet_dashboard_user,
-      dashboard_password      => $puppet_dashboard_password,
-      dashboard_db            => 'puppet_dashboard',
-      dashboard_site          => $puppet_dashboard_site,
-      dashboard_passenger     => true,
-      dashboard_port          => '3000',
-      require                 => Apt::Source['puppet'],
-      before                  => File['/etc/default/puppet-dashboard-workers'],
+      master                 => true,
+      agent                  => true,
+      agent_cron             => false,
+      autosign               => true,
+      puppet_passenger       => true,
+      storeconfigs           => true,
+      storeconfigs_dbadapter => 'puppetdb',
+      dashboard              => true,
+      dashboard_user         => $puppet_dashboard_user,
+      dashboard_password     => $puppet_dashboard_password,
+      dashboard_db           => 'puppet_dashboard',
+      dashboard_site         => $puppet_dashboard_site,
+      dashboard_passenger    => true,
+      dashboard_port         => '3000',
+      require                => Apt::Source['puppet'],
+      before                 => File['/etc/default/puppet-dashboard-workers'],
     }
 
     class { 'puppetdb':
@@ -98,6 +99,24 @@ class admin::puppet::master (
     ensure     => running,
     enable     => true,
     require    => Package['puppet-dashboard'],
+  }
+
+  # Configure dashboard pruning
+  file { '/usr/share/puppet-dashboard/bin/prune.sh':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    source  => 'puppet:///modules/admin/puppet/prune.sh',
+    require => Class['puppet'],
+  }
+
+  cron { 'puppet dashboard prune':
+    command => '/usr/share/puppet-dashboard/bin/prune.sh',
+    user    => 'root',
+    minute  => '0',
+    hour    => '3',
+    require => File['/usr/share/puppet-dashboard/bin/prune.sh'],
   }
 
   if $hiera {

@@ -43,47 +43,97 @@ printf("%-20s %-20s %-20s %s\n", "User", "Start", "End", "Hours")
 puts
 
 # Start and End dates
+jan1_date = Time.parse('2013-01-01').to_i
 start_date = Time.parse(start_date).to_i
 end_date   = Time.parse(end_date).to_i
+# 11:59:59 of the last day of the month
+end_date += 86399
 
 # Connect to the DB
 d = Mysql.new host, user, password, 'stacktach'
 
-# Collect all of the compute.instance.create events
-event_rs = d.query "select start_raw_id from stacktach_timing where start_when >= '#{start_date}' and end_when <= '#{end_date}' and name ='compute.instance.create'"
+# Tenant hash
+tenants = {}
+
+# Collect all of the compute.instance.create events from Jan 1 and on
+event_rs = d.query "select start_raw_id from stacktach_timing where start_when >= '#{jan1_date}' and name = 'compute.instance.create' order by start_when"
 event_rs.each_hash do |row|
   # Get the raw data of the event
   json_rs = d.query "select json, stacktach_rawdata.when as w from stacktach_rawdata where id = '#{row['start_raw_id']}'"
   raw_row = json_rs.fetch_hash
   j = JSON.parse(raw_row['json'])
   if j[1].has_key?('payload')
-    image_name = j[1]['payload']['image_name']
-    # This might be an issue
-    if image_name =~ /windows/i
-      # We have the windows images that were launched. 
-      tenant = j[1]['_context_project_name']
+    image_name = j[1]['payload']['instance_type']
+    # Was the instance a windows image?
+    if image_name =~ /w1\./i
+      # Hash for instances
+      instance = {}
+
+      # Get the starting time of the instance
       instance_start = Time.at(raw_row['w'].to_i)
-      instance_start_print = instance_start.strftime("%Y-%m-%d %H:%M")
       instance_id = j[1]['payload']['instance_id']
+      instance['instance_id'] = instance_id
+      instance['start'] = instance_start
+      instance['end'] = nil
       
       # Let's try to find when they were destroyed, if at all
-      instance_rs = d.query "select last_state, last_raw_id, stacktach_rawdata.when as w from stacktach_lifecycle inner join stacktach_rawdata on stacktach_lifecycle.last_raw_id=stacktach_rawdata.id where stacktach_lifecycle.instance = '#{instance_id}'"
+      instance_rs = d.query "select stacktach_rawdata.when as w from stacktach_rawdata where instance = '#{instance_id}' and event = 'compute.instance.delete.start'"
       instance_hash = instance_rs.fetch_hash
-      instance_end = ''
-      instance_end_print = "Still running"
-      duration = Time.now - instance_start
-      if instance_hash['last_state'] == 'deleted'
+      instance['duration'] = ((Time.now - instance['start']) / 60).to_i / 60
+      if instance_hash
+        # If the instance was deleted in a month before
+        # the month we're reporting on, then skip it
         instance_end = Time.at(instance_hash['w'].to_i)
-        instance_end_print = instance_end.strftime("%Y-%m-%d %H:%M")
-        duration = instance_end - instance_start
+        instance['end'] = instance_end
+        instance['duration'] = ((instance_end - instance_start) / 60).to_i / 60
       end
 
-      # Calculate the duration
-      hours = (duration / 60).to_i / 60
+      # Filter unwanted instances
+      next if instance['start'].to_i < start_date 
+      next if instance['end'].to_i > end_date
+      next if instance['duration'] < 1
 
-      # Print out the info
-      printf("%-20s %-20s %-20s %-20s\n", tenant, instance_start_print, instance_end_print, hours)
+      # Add an entry to the tenants hash
+      tenant = j[1]['_context_project_name']
+      tenants[tenant] = [] if ! tenants.has_key?(tenant)
+      tenants[tenant].push(instance)
 
     end
   end
 end
+
+grand_total = 0
+tenants.each do |tenant, instances|
+  puts tenant
+  total = instances.length
+  x = {}
+  instances.each do |instance|
+    # Print out the info
+    end_print = instance['end'] ? instance['end'].strftime("%Y-%m-%d %H:%M") : 'Still Running'
+    start_print = instance['start'].strftime("%Y-%m-%d %H:%M")
+    hours = instance['duration']
+    printf("%-20s %-20s %-20s %-20s\n", '', start_print, end_print, hours)
+  end
+
+  # Figure out overlapping instances
+  total = instances.length
+  x = []
+  instances.each do |instance|
+    instances.each do |instance2|
+      next if instance['instance_id'] == instance2['instance_id']
+      next if ! instance2['end']
+      next if x.include?(instance['instance_id'])
+      if instance['start'] > instance2['end']
+        x.push(instance['instance_id'])
+        total -= 1
+      end
+    end
+  end
+  printf("%-20s %-20s %-20s %-20s\n", '', 'Total Concurrent', '', total)
+  puts
+
+  grand_total += total
+
+end
+
+puts "Grand total: #{grand_total}"

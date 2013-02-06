@@ -1,8 +1,8 @@
 class admin::backups::mysql {
 
-  class { 'admin::backups': }
+  include admin::backups::base
 
-  File { 
+  File {
     owner => 'root',
     group => 'root',
     mode  => '0644',

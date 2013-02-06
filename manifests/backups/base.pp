@@ -1,4 +1,4 @@
-class admin::backups {
+class admin::backups::base {
 
   file { '/var/lib/backups':
     ensure => directory,

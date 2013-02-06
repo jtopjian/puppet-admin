@@ -35,7 +35,7 @@ class admin::openstack::compute::node {
     'vlan_interface':           value => hiera('private_interface');
   }
 
-  # Ensure libvirtu uuid's are unique     
+  # Ensure libvirtd uuid's are unique     
   class { 'admin::fixes::libvirtd_uuid': }
 
   ## syslog
@@ -82,6 +82,11 @@ class admin::openstack::compute::node {
     'DEFAULT/notification_driver': value => 'cinder.openstack.common.notifier.rabbit_notifier';
     'DEFAULT/notification_topics': value => 'monitor';
     'DEFAULT/control_exchange':    value => 'nova';
+  }
+
+  ## Do not remove unused base images
+  nova_config {
+    'remove_unused_base_images': value => 'False';
   }
 
   # Nagios checks

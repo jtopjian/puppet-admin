@@ -1,7 +1,11 @@
 class admin::mail::postfix (
   $my_networks = ['127.0.0.0/8', '[::ffff:127.0.0.0]/104', '[::1]/128'],
-  $relayhost = undef
+  $relayhost = false
 ) {
+
+  $private_ip = hiera('private_ip')
+  $pxe_ip     = hiera('pxe_ip')
+
   package { 'postfix':
     ensure => latest,
   }
