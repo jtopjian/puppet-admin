@@ -138,8 +138,9 @@ class admin::openstack::controller::base {
 
   ## notifications
   nova_config {
-    'notification_driver': value => 'nova.openstack.common.notifier.rabbit_notifier';
-    'notification_topics': value => 'monitor';
+    'notification_driver':         value => 'nova.openstack.common.notifier.rabbit_notifier';
+    'notification_topics':         value => 'monitor';
+    'instance_usage_audit_period': value => 'hourly';
   }
 
   cinder_config {
@@ -147,6 +148,15 @@ class admin::openstack::controller::base {
     'DEFAULT/notification_topics': value => 'monitor';
     'DEFAULT/control_exchange':    value => 'nova';
   }
+
+  glance_api_config {                                                         
+    'DEFAULT/notifier_strategy':            value => 'rabbit';                
+    'DEFAULT/rabbit_host':                  value => hiera('rabbit_host');    
+    'DEFAULT/rabbit_userid':                value => hiera('rabbit_user');    
+    'DEFAULT/rabbit_password':              value => hiera('rabbit_password');
+    'DEFAULT/rabbit_notification_exchange': value => 'nova';                  
+    'DEFAULT/rabbit_notification_topic':    value => 'monitor';               
+  }                                                                           
 
   ## rabbitmqrc
   class { 'admin::rabbitmq::rabbitmqrc': }

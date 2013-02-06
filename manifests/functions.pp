@@ -28,4 +28,17 @@ class admin::functions {
     }
   }
 
+  define mysql_host_access ($user, $password, $privileges) {
+    database_user { "${user}@${name}":
+      provider      => 'mysql',
+      ensure        => present,
+      password_hash => mysql_password($password),
+    }
+    database_grant { "${user}@${name}":
+      provider   => 'mysql',
+      privileges => $privileges,
+      require    => Database_user["${user}@${name}"],
+    }
+  }
+
 }
