@@ -198,6 +198,11 @@ class admin::openstack::controller::base {
     location       => $::location,
   }
 
+  class { 'admin::nagios::check_openstack_nodes_nrpe':
+    contact_groups => 'sysadmins',
+    location       => $::location,
+  }
+
   # Extra packages
   class { 'admin::openstack::controller::packages': }
 
