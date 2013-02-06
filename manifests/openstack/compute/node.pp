@@ -35,6 +35,9 @@ class admin::openstack::compute::node {
     'vlan_interface':           value => hiera('private_interface');
   }
 
+  # Ensure libvirtu uuid's are unique     
+  class { 'admin::fixes::libvirtd_uuid': }
+
   ## syslog
   # nova
   nova_config {
@@ -48,11 +51,11 @@ class admin::openstack::compute::node {
     'DEFAULT/syslog_log_facility': value => 'LOG_LOCAL3';
   }
 
-  ## Cinder
   class { 'cinder::base':
     verbose         => 'True',
     sql_connection  => hiera('cinder_db'),
     rabbit_password => hiera('rabbit_password'),
+    rabbit_host     => hiera('cloud_private_ip'),
   }
 
   class { 'cinder::api':
@@ -63,14 +66,16 @@ class admin::openstack::compute::node {
 
   class { 'cinder::volume': }
   class { 'cinder::volume::iscsi': 
-    volume_group     => 'nova-volumes',
+    volume_group     => 'cinder-volumes',
     iscsi_ip_address => $::ipaddress_vlan30,
   }
 
   ## notifications
   nova_config {
-    'notification_driver': value => 'nova.openstack.common.notifier.rabbit_notifier';
-    'notification_topics': value => 'monitor';
+    'notification_driver':         value => 'nova.openstack.common.notifier.rabbit_notifier';
+    'notification_topics':         value => 'monitor';
+    'instance_usage_audit_period': value => 'hour';
+    'instance_usage_audit':        value => 'True';
   }
 
   cinder_config {
@@ -87,6 +92,15 @@ class admin::openstack::compute::node {
   class { 'admin::nagios::check_kvm-pegged_nrpe':
     contact_groups => ['sysadmins'],
     location       => $::location,
+  }
+
+  # GlusterFS
+  class { 'admin::openstack::compute::glusterfs': }
+
+  # Extra programs
+  $packages = ['xfsprogs']
+  package { $packages:
+    ensure => installed,
   }
 
 }
