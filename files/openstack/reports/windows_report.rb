@@ -23,6 +23,14 @@ else
   exit
 end
 
+# Windows Image Information
+IMAGES = {
+  'fffee34c-d3d0-47a0-9716-47ce16244769' => 'Windows 7',
+  '7eecedab-5123-422d-b766-1d513b45396e' => 'Windows 2008 R2',
+  '0decc679-e437-487f-8077-3c89b32fae58' => 'Windows 2008 R2',
+  '87ef156c-de7f-4760-ae1f-2f04d041728e' => 'Windows 2008 R2',
+}
+
 # Parse the command-line arguments
 if ARGV.length == 0
   # No arguments, so use the first and last day of last month
@@ -63,9 +71,9 @@ event_rs.each_hash do |row|
   raw_row = json_rs.fetch_hash
   j = JSON.parse(raw_row['json'])
   if j[1].has_key?('payload')
-    image_name = j[1]['payload']['instance_type']
+    base_image_ref = j[1]['payload']['image_meta']['base_image_ref']
     # Was the instance a windows image?
-    if image_name =~ /w1\./i
+    if IMAGES.keys.include?(base_image_ref)
       # Hash for instances
       instance = {}
 
