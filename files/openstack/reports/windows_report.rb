@@ -89,8 +89,6 @@ event_rs.each_hash do |row|
       instance_hash = instance_rs.fetch_hash
       instance['duration'] = ((Time.now - instance['start']) / 60).to_i / 60
       if instance_hash
-        # If the instance was deleted in a month before
-        # the month we're reporting on, then skip it
         instance_end = Time.at(instance_hash['w'].to_i)
         instance['end'] = instance_end
         instance['duration'] = ((instance_end - instance_start) / 60).to_i / 60
@@ -98,6 +96,7 @@ event_rs.each_hash do |row|
 
       # Filter unwanted instances
       next if instance['start'].to_i < start_date 
+      next if instance['start'].to_i > end_date
       next if instance['end'].to_i > end_date
       next if instance['duration'] < 1
 
