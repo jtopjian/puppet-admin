@@ -29,6 +29,7 @@ IMAGES = {
   '7eecedab-5123-422d-b766-1d513b45396e' => 'Windows 2008 R2',
   '0decc679-e437-487f-8077-3c89b32fae58' => 'Windows 2008 R2',
   '87ef156c-de7f-4760-ae1f-2f04d041728e' => 'Windows 2008 R2',
+  '086f3cec-4921-4df2-a681-aeea7e09e5b5' => 'Windows 2008 R2',
 }
 
 # Parse the command-line arguments
